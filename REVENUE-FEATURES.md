@@ -258,3 +258,59 @@ _Format: Feature name | Target | Pain point | Monetization | Rough market size_
 - **Market size:** US home improvement: $600B. Construction materials: $230B.
 - **Integration:** Partner with Home Depot, Lowe's for affiliate revenue on material purchases.
 
+### 🌙 Night Shift Ideas (2026-02-20)
+
+#### 23. Delivery Driver Vision — Route Optimization + Proof of Delivery
+- **Target:** Last-mile delivery drivers (Amazon DSP, FedEx Ground, DoorDash, UPS), fleet managers, courier companies
+- **Pain point:** Drivers waste 15-30 min/day navigating apartment complexes, finding unit numbers, and taking proof-of-delivery photos. Package theft claims cost Amazon alone $3B+/year. Proving delivery happened exactly where/when claimed is a constant battle.
+- **How:** Glasses read building/unit numbers and navigate the driver hands-free ("Turn left, unit 4B is the third door on the right"). Auto-capture proof-of-delivery photos with GPS + timestamp without the driver fumbling with a phone. Package label OCR auto-matches deliveries to route manifest. Glasses remember building layouts from previous visits ("Last time you delivered here, the back entrance was open").
+- **Pricing:** $14.99/mo per driver, $99/mo per fleet (10 drivers), $499/mo enterprise (unlimited drivers + analytics dashboard). Per-delivery pricing option: $0.05/delivery.
+- **Why 10x:** Each driver completing 10 more deliveries/day at $2/delivery = $20/day extra revenue. Proof-of-delivery photos that are GPS-stamped and timestamped cut false theft claims by 60%+. At scale, the theft prevention alone saves millions.
+- **Market size:** US last-mile delivery market: $200B. 1.4M delivery drivers in the US. Amazon DSPs alone: 3,000+ companies.
+- **Viral angle:** TikTok compilation of "delivery driver life hacks with smart glasses" — drivers LOVE sharing their daily experiences on social media.
+
+#### 24. Restaurant Kitchen AI — Hands-Free Kitchen Display + Quality Control
+- **Target:** Restaurant chefs, kitchen managers, QSR chains (McDonald's, Chipotle), cloud kitchens, catering companies
+- **Pain point:** Line cooks constantly look up at the kitchen display system (KDS) to read orders, then look back down at the station. During rush, this back-and-forth causes mistakes, slows tickets, and leads to wrong orders. Average wrong order costs $15-20 to remake + kills customer satisfaction. Health inspectors require temperature logs, cleanliness documentation.
+- **How:** Orders appear in glasses HUD (voice-read or visual overlay via companion display). AI monitors food assembly: "Missing pickle on ticket 47." "That burger looks undercooked — internal temp check recommended." Voice commands to mark orders done. Auto-documentation for health inspection compliance (timestamped prep photos, temperature readings). Allergen alerts when order has allergy flags.
+- **Pricing:** $79/mo per station, $299/mo per restaurant (all stations), $999/mo chain (per-location). QSR enterprise: custom pricing.
+- **Why 10x:** Reducing wrong orders by even 20% saves a busy restaurant $500-1,500/month. Health inspection failures cost $5,000-50,000 in fines. Auto-compliance documentation alone justifies the cost.
+- **Market size:** US restaurant industry: $1T. Restaurant technology: $55B. 1M+ restaurants in the US.
+- **The kicker:** Partner with existing POS systems (Toast, Square for Restaurants, Clover) to pull orders directly to the glasses. Integration API = distribution channel.
+
+#### 25. Insurance Claims Adjuster — Visual Damage Assessment
+- **Target:** Insurance adjusters, claims investigators, catastrophe response teams (CAT teams), public adjusters
+- **Pain point:** After a storm, fire, or accident, adjusters visit hundreds of properties. They photograph damage, write estimates, and file reports — all while standing in someone's flooded living room with a clipboard. Backlog after major events can be 6-12 months. Xactimate (industry standard software) estimates take 30-60 min per property to complete manually.
+- **How:** Walk through the damaged property wearing glasses. AI auto-identifies: water damage (water lines, mold, warping), fire damage (char patterns, smoke damage), wind damage (missing shingles, structural displacement), vehicle damage (dents, scratches, structural). Auto-generates Xactimate-compatible line items with photo evidence. Compares to pre-loss condition (if previous inspection exists). Generates professional report with severity scoring.
+- **Pricing:** $199/mo per adjuster, $999/mo per claims office, enterprise: $5,000-20,000/mo per carrier.
+- **Why 10x:** An adjuster who can complete 8 claims/day instead of 4 generates 2x the throughput. After Hurricane Katrina, adjusters were paid $300-500 per claim — at 8/day instead of 4, the glasses pay for themselves in a single day. Xactimate estimate automation alone saves 20-30 min per claim.
+- **Market size:** Property & casualty insurance: $750B premiums/year. 300,000+ claims adjusters in the US. InsurTech market: $10B+.
+- **The massive play:** After every major natural disaster, there's a surge of 50,000+ temporary CAT adjusters deployed. If we're THE tool they use, that's massive recurring revenue on a predictable cadence.
+
+#### 26. Accessibility Vision — AI Eyes for the Visually Impaired
+- **Target:** Visually impaired individuals, blindness rehabilitation services, VA hospitals (veteran eye injuries), schools for the blind
+- **Pain point:** 12M+ Americans have vision impairment. Current assistive tech (Aira service: $329/mo, OrCam: $4,500 device) is expensive. Basic tasks — reading menus, identifying products, navigating spaces, reading mail — require sighted assistance or expensive equipment.
+- **How:** Glasses continuously describe the environment via TTS. "You're approaching a crosswalk. The signal is red. There are 3 people waiting. The signal just turned green." Product identification in stores: "You're holding a can of Campbell's Tomato Soup. The price tag says $2.49." Mail reading: "This is a letter from your dentist. Your appointment is March 15 at 2pm." Face recognition for regular contacts: "Sarah is approaching from your left."
+- **Pricing:** $19.99/mo consumer (subsidized — the social good play), $49/mo enhanced (face recognition, custom training), $199/mo institutional (rehabilitation centers, VA). **Critical:** Apply for FDA breakthrough device designation and pursue insurance reimbursement (would be covered under durable medical equipment).
+- **Why 10x:** Aira charges $329/mo for human-guided assistance. We offer AI-powered for $20/mo — 16x cheaper. OrCam device costs $4,500 one-time. Ray-Bans + our service: ~$380/year.
+- **Market size:** Global assistive technology: $25B. US visually impaired: 12M. Blindness/low vision services: $2B.
+- **Impact beyond money:** This is the feature that gets Dorrian on stage at CES, gets press coverage, and makes the brand synonymous with "AI for good." The PR value alone is worth millions. This feature turns a smart glasses accessory into a medical device that changes lives.
+- **Grant potential:** NEI (National Eye Institute), VA Innovation, Google.org Impact Challenge — there are significant grants available for assistive vision technology. Could fund initial development.
+
+#### 27. Compliance Badge Scanner — Workplace Safety + Certification Verification
+- **Target:** Construction site managers, OSHA compliance officers, event security, industrial facility managers
+- **Pain point:** Construction sites legally require all workers to have current safety certifications (OSHA 10/30, fall protection, confined space, etc.). Checking every badge every morning for a 200-person site takes 30-60 minutes. Fake or expired certifications are a massive liability — one expired cert found during an OSHA audit = $15,000+ fine per violation.
+- **How:** Walk past workers, glasses read their badge/ID → AI verifies against certification database. "John Smith: OSHA 30 valid, fall protection expired 2 weeks ago — notify supervisor." Batch mode: stand at gate as workers enter, auto-scan each badge. Generates daily compliance report. Tracks training expiration dates and auto-generates renewal reminders.
+- **Pricing:** $199/mo per site, $499/mo per company (5 sites), enterprise: $2,000/mo (unlimited sites + API + audit integration).
+- **Why 10x:** One OSHA violation: $15,876 (serious) to $156,259 (willful). A single prevented violation pays for years of the service. Morning badge check in 5 minutes instead of 60 = recovered labor cost.
+- **Market size:** US construction industry: $2T. OSHA compliance services: $3B. 700,000+ construction companies.
+
+#### 28. Live Sports Analytics — Coaching Vision
+- **Target:** Sports coaches (youth through professional), sports analysts, scout teams, athletic trainers
+- **Pain point:** Coaches spend hours reviewing game film after the fact. Real-time analytics during games require expensive camera systems ($10-50K). Youth and college programs can't afford dedicated analytics staff.
+- **How:** Coach wears glasses during practice/games. AI tracks player positions, formations, play execution. Real-time voice alerts: "Number 24 keeps dropping his shoulder before cutting left — tell the DB." Post-practice report with play-by-play analysis, player heat maps, formation success rates. Compare current formations to opponent film.
+- **Pricing:** $49/mo youth/high school, $149/mo college, $499/mo professional, $1,999/mo pro team package (multi-coach + historical analytics).
+- **Why 10x:** A dedicated video coordinator costs $40-80K/year. Analytics platforms (Hudl, Catapult): $10-50K/year. This gives every coach pocket analytics for under $2K/year.
+- **Market size:** US youth sports: $19B. Sports analytics: $3.4B. Sports coaching software: $1.2B.
+- **Viral potential:** "I coached a game with AI glasses" YouTube video would absolutely explode. Every sports parent would want this for their kid's team.
+
