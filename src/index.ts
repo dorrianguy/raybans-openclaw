@@ -2,7 +2,7 @@
  * @openclaw/raybans-vision — Meta Ray-Bans × OpenClaw Vision Platform
  *
  * Smart glasses + AI vision agents for inventory counting,
- * product identification, and hands-free intelligence.
+ * product identification, hands-free intelligence, and life indexing.
  */
 
 // Core types
@@ -53,3 +53,25 @@ export { VoiceCommandRouter, parseVoiceCommand } from './voice/voice-command-rou
 // Agents
 export { InventoryAgent } from './agents/inventory-agent.js';
 export type { InventoryAgentConfig } from './agents/inventory-agent.js';
+export { MemoryAgent } from './agents/memory-agent.js';
+export type { MemoryAgentConfig, MemoryAgentEvents, MemorySearchResult } from './agents/memory-agent.js';
+
+// Bridge (OpenClaw node integration)
+export { NodeBridge } from './bridge/node-bridge.js';
+export type { NodeBridgeConfig, NodeBridgeEvents, DeviceInfo } from './bridge/node-bridge.js';
+export { ImageScheduler } from './bridge/image-scheduler.js';
+export type { ImageSchedulerConfig, ImageSchedulerEvents } from './bridge/image-scheduler.js';
+
+// Storage (persistence layer)
+export { PersistenceLayer } from './storage/persistence.js';
+export type {
+  PersistenceConfig,
+  SessionQuery,
+  ItemQuery,
+  MemoryQuery,
+  MemoryEntry,
+} from './storage/persistence.js';
+
+// Dashboard API
+export { DashboardApiServer } from './dashboard/api-server.js';
+export type { DashboardApiConfig, DashboardApiEvents } from './dashboard/api-server.js';
