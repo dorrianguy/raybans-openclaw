@@ -4,6 +4,143 @@ _Updated by Night Shift agent + daytime development._
 
 ---
 
+## 2026-02-21 — Night Shift #11 (Context Router + Networking Agent + Deal Analysis)
+
+### What Was Built
+
+#### 1. Context Router (`src/routing/context-router.ts`)
+- **The brain of the platform** — decides which specialist agent handles each image
+- Scene-type auto-detection: retail_shelf → inventory/deals, person → networking, vehicle → deals, whiteboard → meeting
+- Voice intent routing: "price check" → deals agent, "who is this" → networking agent
+- Mode stickiness: stays in current mode unless scene clearly changes (prevents thrashing)
+- Concurrent agent support: multiple agents can process the same image in parallel
+- Priority-based routing: security alerts (priority 1) override everything
+- Configurable mode switch threshold (default 0.6 confidence)
+- Mode history tracking for context awareness
+- **27 tests**
+
+#### 2. Networking Agent (`src/agents/networking-agent.ts`)
+- Your personal intel analyst at conferences, meetings, and events
+- **Contact Extraction:** Parses name badges, business cards, and name plates via OCR
+  - Extracts: name, title, company, email, phone, LinkedIn, Twitter, GitHub, website
+  - Smart filtering: doesn't mistake "EXIT" signs or emails as names
+  - Name parsing: first/last name splitting
+- **Web Research Pipeline:** Auto-researches each person you meet
+  - Company funding detection ("Stripe raised $6.5B Series I")
+  - Recent company news extraction
+  - Professional interests identification
+  - Company name normalization ("Stripe Inc." → matches "Stripe" in results)
+- **Social Intelligence:**
+  - Generates conversation topics based on research
+  - Suggests ice breakers ("Congrats on the recent funding!")
+  - Builds a research summary for each contact
+- **Voice Briefing:** 15-30 second TTS briefing for each scanned contact
+  - "Emily Park, Director of Product at Vercel. They just raised $250M Series E. Try: What's the most exciting thing happening at Vercel right now?"
+- **Contact Management:** Dedup by email/name, merge on re-scan, notes, search, cache limits
+- **30 tests**
+
+#### 3. Deal Analysis Agent (`src/agents/deal-agent.ts`)
+- Real-time price intelligence for anything with a price tag
+- **Category Detection:** Auto-detects product, vehicle, or real estate from scene analysis
+  - Products: barcodes, shelf labels, retail scenes
+  - Vehicles: VIN, mileage, make/model, window stickers
+  - Real Estate: beds/baths/sqft, addresses, listing signs
+- **Price Extraction:** Parses $XX.XX, $X,XXX, USD, shelf tags, sticker prices
+- **Market Research:** Searches for comparable prices across major retailers
+  - Source mapping: Amazon, Best Buy, eBay, Walmart, KBB, CarGurus, Zillow, etc.
+- **Valuation Engine:**
+  - Fair Market Value calculation (median of market prices)
+  - 5-tier verdict: great_deal → good_deal → fair_price → overpriced → rip_off
+  - Savings calculation vs cheapest available option
+- **Negotiation Intelligence:**
+  - Price-based leverage ("$3,100 above fair market value")
+  - Category-specific advice (vehicle: Carfax, recalls; real estate: disclosures, days-on-market)
+  - Warning system for too-good-to-be-true and overpriced items
+- **Voice Verdict:** Concise TTS output ("Sony WH-1000XM5. Asking $349. Amazon has it for $280. Overpriced. You could save $70.")
+- **Deal History:** Track all analyses with search and stats
+- **50 tests**
+
+#### 4. Integration Tests (`src/integration/e2e-flow.test.ts`)
+- End-to-end pipeline tests with mocked vision model
+- **Shopping scenario:** shelf image → router → deal agent → price comparison + savings
+- **Conference scenario:** badge scan → router → networking agent → contact + research
+- **Car dealership scenario:** vehicle → router → deal agent → vehicle info + market comparison
+- **Voice → Router:** parseVoiceCommand → routeVoiceCommand → correct agent
+- **Mode switching:** deals mode → conference encounter → handled correctly
+- **Error resilience:** faulty agents don't crash the router
+- **Stats aggregation:** multi-route statistics tracking
+- **14 tests**
+
+#### 5. Voice Router Enhancement
+- Added "who is this/they" patterns for networking scenarios
+- Added "who am I/are we looking/talking at/to" patterns
+
+#### 6. Revenue Brainstorming — 6 New Ideas
+- **#29 Event Photographer Assistant** — Real-time shot scoring + auto-culling ($29.99-199/mo, $12B market)
+- **#30 Warehouse Pick Verification** — Zero-error fulfillment, 192:1 ROI ($29-499/mo, $300B market)
+- **#31 Tattoo Artist Preview** — "See it before you ink it" AR ($49-149/mo, $3B market, 10/10 viral)
+- **#32 Electrician/Plumber Diagnostic** — X-ray vision for trades ($49-499/mo, $330B market)
+- **#33 Museum Docent AI** — Personal art guide ($999-5K/mo B2B, $21B market)
+- **#34 Parking Lot Asset Tracker** — Fleet/dealer lot intelligence ($299-5K/mo, $40B market)
+
+### Stats
+- **7 new files** (3 modules + 3 test suites + 1 integration test) + 2 modified
+- **~4,878 lines of code** added
+- **367 total tests** (121 new this session, all passing)
+- **6 new revenue ideas** documented with full specs
+
+### Architecture After Tonight
+```
+src/
+├── types.ts                              # 30+ shared interfaces & types
+├── index.ts                              # Public API (updated)
+├── vision/
+│   └── vision-pipeline.ts                # Image → structured analysis
+├── inventory/
+│   ├── inventory-state.ts                # Running inventory state
+│   ├── inventory-state.test.ts           # 42 tests
+│   ├── product-database.ts              # UPC lookup + caching
+│   ├── product-database.test.ts         # 24 tests
+│   ├── export-service.ts                # CSV/JSON/report generation
+│   └── export-service.test.ts           # 28 tests
+├── voice/
+│   ├── voice-command-router.ts          # Voice command parsing (enhanced)
+│   └── voice-command-router.test.ts     # 50 tests
+├── bridge/
+│   ├── node-bridge.ts                   # OpenClaw node integration
+│   ├── node-bridge.test.ts              # 21 tests
+│   ├── image-scheduler.ts              # Smart auto-capture
+│   └── image-scheduler.test.ts          # 19 tests
+├── storage/
+│   ├── persistence.ts                   # SQLite persistence layer
+│   └── persistence.test.ts              # 38 tests
+├── routing/                              # ← NEW
+│   ├── context-router.ts               # Intelligent image routing
+│   └── context-router.test.ts           # 27 tests
+├── agents/
+│   ├── inventory-agent.ts               # Inventory orchestrator
+│   ├── memory-agent.ts                  # Perfect Memory
+│   ├── memory-agent.test.ts             # 24 tests
+│   ├── networking-agent.ts              # ← NEW: Badge/card scanner
+│   ├── networking-agent.test.ts         # 30 tests
+│   ├── deal-agent.ts                    # ← NEW: Price intelligence
+│   └── deal-agent.test.ts              # 50 tests
+├── integration/                          # ← NEW
+│   └── e2e-flow.test.ts                # 14 end-to-end tests
+└── dashboard/
+    └── api-server.ts                    # REST API + SSE for dashboard
+```
+
+### What's Next (Priority)
+1. **Web Dashboard UI** — React frontend connecting to the API server
+2. **Security Agent** — Feature #4: QR codes, ATM skimmers, document analysis
+3. **Meeting Intelligence Agent** — Feature #5: transcription + slides + action items
+4. **Store Layout Mapping** — Aisle/section tracking with GPS correlation
+5. **Context Chain Engine** — Feature #10: multi-agent workflows
+6. **Inspection Agent** — Feature #7: property/server room walkthroughs
+
+---
+
 ## 2026-02-20 — Night Shift #10 (Node Bridge + Persistence + Memory Agent)
 
 ### What Was Built
@@ -248,16 +385,21 @@ src/
 | Inventory State | 🟢 | Full lifecycle, dedup, flags |
 | Product Database | 🟢 | UPC lookup, cache, batch |
 | Export Service | 🟢 | CSV, TSV, JSON, markdown |
-| Voice Commands | 🟢 | 20+ commands, extensible |
+| Voice Commands | 🟢 | 20+ commands, extensible, "who is this" |
 | Inventory Agent | 🟢 | Full orchestration |
 | Node Bridge | 🟢 | Camera, TTS, health, GPS, burst |
 | Image Scheduler | 🟢 | Auto-snap, change detection, adaptive |
 | Persistence (SQLite) | 🟢 | Sessions, items, images, FTS5 memory |
 | Memory Agent | 🟢 | Search, browse, privacy, retention |
 | Dashboard API | 🟢 | REST + SSE, 13 endpoints |
-| Unit Tests | 🟢 | 246 tests, all passing |
+| Context Router | 🟢 | Scene-based routing, mode stickiness, concurrent agents |
+| Networking Agent | 🟢 | Badge/card OCR, research, briefings, dedup |
+| Deal Analysis Agent | 🟢 | Products/vehicles/real estate, verdicts, negotiation |
+| Integration Tests | 🟢 | 14 E2E flow tests with mock vision |
+| Unit Tests | 🟢 | 367 tests, all passing |
 | Dashboard UI | 🔴 | React frontend planned |
-| Integration Tests | 🔴 | E2E flows with mock vision |
-| Networking Agent | 🔴 | Badge/card scanning agent |
-| Deal Analysis Agent | 🔴 | Price intelligence agent |
+| Security Agent | 🔴 | QR decode, threat detection |
+| Meeting Intel Agent | 🔴 | Transcription + slides + actions |
+| Inspection Agent | 🔴 | Property/site walkthrough reports |
+| Context Chain Engine | 🔴 | Multi-agent workflow orchestration |
 | Store Layout Mapping | 🔴 | Aisle tracking + GPS |
