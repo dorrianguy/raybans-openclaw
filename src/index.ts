@@ -55,6 +55,27 @@ export { InventoryAgent } from './agents/inventory-agent.js';
 export type { InventoryAgentConfig } from './agents/inventory-agent.js';
 export { MemoryAgent } from './agents/memory-agent.js';
 export type { MemoryAgentConfig, MemoryAgentEvents, MemorySearchResult } from './agents/memory-agent.js';
+export { NetworkingAgent } from './agents/networking-agent.js';
+export type {
+  NetworkingAgentConfig,
+  NetworkingAgentEvents,
+  ContactInfo,
+  ContactContext,
+  PersonResearch,
+} from './agents/networking-agent.js';
+export { DealAnalysisAgent } from './agents/deal-agent.js';
+export type {
+  DealAnalysisAgentConfig,
+  DealAnalysisEvents,
+  DealAnalysis,
+  DealCategory,
+  DealVerdict,
+  ItemInfo,
+  VehicleInfo,
+  PropertyInfo,
+  MarketPrice,
+  AlternativeItem,
+} from './agents/deal-agent.js';
 
 // Bridge (OpenClaw node integration)
 export { NodeBridge } from './bridge/node-bridge.js';
@@ -71,6 +92,18 @@ export type {
   MemoryQuery,
   MemoryEntry,
 } from './storage/persistence.js';
+
+// Routing (Context Router)
+export { ContextRouter } from './routing/context-router.js';
+export type {
+  ContextRouterConfig,
+  ContextRouterEvents,
+  SpecialistAgent,
+  RoutingContext,
+  AgentResponse,
+  RoutingMode,
+  RoutingDecision,
+} from './routing/context-router.js';
 
 // Dashboard API
 export { DashboardApiServer } from './dashboard/api-server.js';

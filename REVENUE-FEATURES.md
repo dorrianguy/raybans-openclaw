@@ -314,3 +314,59 @@ _Format: Feature name | Target | Pain point | Monetization | Rough market size_
 - **Market size:** US youth sports: $19B. Sports analytics: $3.4B. Sports coaching software: $1.2B.
 - **Viral potential:** "I coached a game with AI glasses" YouTube video would absolutely explode. Every sports parent would want this for their kid's team.
 
+### 🌙 Night Shift Ideas (2026-02-21)
+
+#### 29. Event Photographer Assistant — Never Miss a Shot
+- **Target:** Event photographers, wedding photographers, sports photographers, photojournalists
+- **Pain point:** Photographers shoot 2,000-5,000 photos per event. Culling (picking the best shots) takes 4-8 hours after. They miss moments because they're reviewing the LCD screen instead of watching the scene. Photo delivery takes days because culling is the bottleneck.
+- **How:** Glasses provide a real-time "shoot score" via TTS as you photograph: "Great composition. Subject is in focus. Exposure is +0.7 — consider dialing down." AI pre-culls as you shoot by analyzing each image. During events: "The bride's father is tearing up — don't miss it." Face recognition tracks key subjects across the event. Post-event: AI delivers a pre-sorted gallery with top picks, organized by moment/person.
+- **Pricing:** $29.99/mo hobbyist, $79/mo professional, $199/mo studio (multi-photographer, client delivery). Per-event option: $49/event.
+- **Why 10x:** A professional photographer spends 8 hours culling × $75/hr = $600 in labor per event. Cut that to 1 hour = $525 saved. A few events and the subscription pays for itself all year. Plus delivering photos in 24 hours instead of 2 weeks = competitive advantage.
+- **Market size:** US photography services: $12B. 200,000+ professional photographers. Wedding photography alone: $3B.
+- **Integration angle:** Partner with gallery delivery services (ShootProof, Pixieset) for automated upload of AI-culled selections.
+
+#### 30. Warehouse Pick Verification — Zero-Error Fulfillment
+- **Target:** E-commerce fulfillment centers, 3PLs, Amazon FBA prep services, subscription box companies
+- **Pain point:** Pick errors in e-commerce fulfillment run 1-3%. Each error costs $10-25 in reshipping + returns + customer service. A warehouse shipping 10,000 orders/day with 2% error rate = 200 errors/day = $2,000-5,000/day in losses. Manual verification (double-checking) slows throughput.
+- **How:** Worker wears glasses while picking. As they grab each item, glasses auto-verify: "Confirmed: SKU 12345, Blue Widget, Quantity 2." If wrong item: "STOP — that's the Red Widget, not Blue. Correct bin is B-7." Barcode scanning hands-free (just look at it). Picks verified against the order in real-time. Dashboard shows per-worker accuracy and speed. End-of-shift report with error patterns.
+- **Pricing:** $29/mo per picker, $199/mo per warehouse (10 pickers), $499/mo enterprise (50+ pickers). ROI calculator shows breakeven at <1 prevented error/day per picker.
+- **Why 10x:** At $20 per pick error × 200 errors/day = $4,000/day. Reducing errors by 80% saves $3,200/day = $96,000/month. The subscription costs $499/mo. That's a 192:1 ROI.
+- **Market size:** E-commerce fulfillment: $100B. 3PL market: $300B globally. 500,000+ warehouse workers in US e-commerce alone.
+- **The kicker:** This data becomes INCREDIBLY valuable. Pick patterns, worker efficiency, optimal warehouse layouts — all derived from the glasses data. Sell aggregated insights back to warehouse management platforms.
+
+#### 31. Tattoo Artist Preview — "See It Before You Ink It"
+- **Target:** Tattoo artists, tattoo shops, clients getting tattoos
+- **Pain point:** Clients can never fully visualize what a tattoo will look like on their body until it's permanently inked. Bad tattoo placement is the #1 regret. Artists spend 30-60 minutes doing marker previews that wash off. AR tattoo preview apps exist but they're phone-based and clunky.
+- **How:** Artist wears glasses while consulting with client. Client stands still → glasses capture the body area → AI overlays the chosen design in real-time at different sizes, positions, and angles. "Move it up 2 inches. Rotate clockwise. Make it 15% larger." Voice commands adjust the preview. Both artist and client can see it through the glasses display or a connected tablet. Saves the approved design+placement for reference during the actual session.
+- **Pricing:** $49/mo per artist, $149/mo per shop (unlimited artists), $9.99 per client preview session (client pays the shop, we take a cut).
+- **Why 10x:** Average tattoo: $200-500. Average cover-up/removal: $1,000-5,000+. If even 10% of clients avoid regret, the value is enormous. Plus it's a competitive differentiator — the shop with AR preview gets more clients.
+- **Market size:** US tattoo industry: $3B. 35,000+ tattoo shops. Growing 8% YoY as tattoos become more mainstream.
+- **Viral factor:** 10/10. Videos of "I tried AI glasses to preview my tattoo" would go absolutely nuclear on TikTok and Instagram. Every single clip is free marketing.
+
+#### 32. Electrician/Plumber Diagnostic Vision — "X-Ray Vision for Trades"
+- **Target:** Electricians, plumbers, HVAC techs, building maintenance crews
+- **Pain point:** Tradespeople open a panel box and see 50 wires with no labels. They spend 20-30 minutes tracing circuits with a multimeter. Old buildings have non-standard wiring that's dangerous. Plumbers can't see what's behind a wall without cutting it open. Knowledge is locked in experienced techs' heads — new hires need years of mentoring.
+- **How:** Look at a breaker panel → glasses identify breakers, read amp ratings, detect improper wire gauges, spot code violations ("That 15-amp breaker has 14-gauge wire — should be 12-gauge for this run"). For plumbing: scan exposed pipes → identify material (copper, PEX, galvanized, PVC), detect corrosion, estimate pipe age, flag potential lead hazards. Voice lookup: "What's the code for a bathroom GFCI in Minnesota?" — instant local code reference.
+- **Pricing:** $49/mo per technician, $199/mo per company (10 techs), $499/mo enterprise. Add-on: local code database subscription $19.99/mo.
+- **Why 10x:** An experienced electrician bills $100-200/hr. Saving 15 minutes of circuit tracing per job × 5 jobs/day = 1.25 hours saved = $125-250/day in recovered billable time. Plus code violation detection prevents $2,000-50,000 in liability per incident.
+- **Market size:** US electrical services: $200B. Plumbing: $130B. 1.2M licensed tradespeople. Apprentice training programs are desperate for tools like this.
+- **The unlock:** This is Field Service AI (Feature #3) but vertical-specific. Specialized versions command higher prices because the knowledge base is deeper and more valuable.
+
+#### 33. Museum/Gallery Docent AI — Personal Art Guide
+- **Target:** Museum visitors, art galleries, historical sites, tourism agencies
+- **Pain point:** Museum audio guides cost $5-10/visit, cover a fixed set of exhibits with scripted narration, and are one-size-fits-all. Visitors want to know different things — a kid wants a story, an art student wants technique analysis, a tourist wants the highlights. Museums struggle to make exhibits accessible to different audiences.
+- **How:** Walk through any museum. Look at any artwork → glasses identify it via image recognition + label OCR → AI delivers a personalized briefing. "This is Starry Night by Van Gogh, 1889. The swirling sky was painted from his asylum window in Saint-Rémy. Notice how the cypresses in the foreground mirror the motion of the clouds. Fun fact: this painting was barely noticed during Van Gogh's lifetime — it sold for roughly $50 in today's money." Adjusts depth based on user preference: casual, enthusiast, expert, child-friendly.
+- **Pricing:** B2B: Museums pay $999-5,000/mo for AI docent integration. B2C: $4.99/mo visitor subscription or $1.99 per museum visit (in-app purchase). Tourism packages: $9.99/city for multi-museum pass.
+- **Why 10x:** Human docent-led tours: $15-30/person. Audio guides: $5-10. Our AI is infinitely patient, speaks any language, adjusts to any knowledge level, and covers EVERY exhibit — not just the 20 featured ones. Museums get analytics on which exhibits attract the most attention.
+- **Market size:** Museum industry: $21B. Cultural tourism: $700B globally. 35,000+ museums in the US.
+- **Partnership play:** Partner with Google Arts & Culture (they have the image database). Partner with Airbnb Experiences for "AI-guided museum tours." White-label for museum chains (Smithsonian, Metropolitan, etc.).
+
+#### 34. Parking Lot Asset Tracker — Commercial Fleet Intelligence
+- **Target:** Car dealerships, rental car companies, trucking fleet managers, airport parking operators
+- **Pain point:** A car dealership with 500 vehicles on a 10-acre lot loses track of cars constantly. "Where's the blue Civic we got Tuesday?" means sending someone to walk the entire lot. Rental companies at airports have thousands of vehicles across multiple lots. Fleet managers need to know: where is every vehicle, what's its condition, is it ready to sell/rent?
+- **How:** Walk the lot wearing glasses. AI auto-reads every license plate, matches to inventory database, logs location (GPS + visual landmarks). "That's a 2024 Accord EX-L, Stock #4782, been on the lot 45 days, priced at $31,500. Average days-to-sale for this model is 28 — consider a price adjustment." For rental: "Vehicle R-1847 is returned, front bumper has a new 4-inch scratch on passenger side — log damage, estimate repair at $350."
+- **Pricing:** $299/mo per lot, $999/mo per company (multi-lot), enterprise: $5,000/mo (unlimited lots + API). Per-scan pricing: $0.50/vehicle/scan for occasional audits.
+- **Why 10x:** A lot porter at a dealership earns $15-18/hr and spends 2-3 hours/day doing lot audits. That's $100-150/day. Plus aged inventory loses $20-40/day in depreciation — identifying it faster saves thousands. For rental companies, untracked damage costs $200-500M/year industry-wide.
+- **Market size:** 18,000+ car dealerships in the US. Rental car industry: $40B. Fleet management: $25B. Commercial parking: $30B.
+- **Data play:** Aggregated lot data (what's selling, what's sitting, regional pricing trends) is worth millions to manufacturers and financial analysts.
+

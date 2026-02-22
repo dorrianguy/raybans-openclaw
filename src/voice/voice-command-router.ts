@@ -143,9 +143,11 @@ const COMMAND_PATTERNS: CommandPattern[] = [
     intent: 'what_is_this',
     patterns: [
       /\bwhat\s+(?:is|are)\s+(?:this|that|these|those)\b/i,
-      /\bidentify\s+(?:this|that)\b/i,
+      /\bwho\s+(?:is|are)\s+(?:this|that|they)\b/i,
+      /\bidentify\s+(?:this|that|them)\b/i,
       /\btell\s+me\s+(?:about|what)\s+(?:this|that)\b/i,
       /\bwhat\s+(?:am\s+I|are\s+we)\s+looking\s+at\b/i,
+      /\bwho\s+(?:am\s+I|are\s+we)\s+(?:looking|talking)\s+(?:at|to)\b/i,
     ],
   },
   {
