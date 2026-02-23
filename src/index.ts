@@ -76,6 +76,41 @@ export type {
   MarketPrice,
   AlternativeItem,
 } from './agents/deal-agent.js';
+export { SecurityAgent } from './agents/security-agent.js';
+export type {
+  SecurityAgentConfig,
+  SecurityAgentEvents,
+  SecurityScanResult,
+  ThreatDetection,
+  ThreatLevel,
+  ThreatCategory,
+  QRAnalysis,
+  URLCheck,
+  DocumentFlag,
+} from './agents/security-agent.js';
+export { MeetingAgent } from './agents/meeting-agent.js';
+export type {
+  MeetingAgentConfig,
+  MeetingAgentEvents,
+  MeetingSession,
+  MeetingSummary,
+  TranscriptSegment,
+  ActionItem,
+  Decision,
+  OpenQuestion,
+  VisualCapture,
+} from './agents/meeting-agent.js';
+export { InspectionAgent } from './agents/inspection-agent.js';
+export type {
+  InspectionAgentConfig,
+  InspectionAgentEvents,
+  InspectionSession,
+  InspectionReport,
+  InspectionFinding,
+  InspectionSection,
+  InspectionType,
+  FindingSeverity,
+} from './agents/inspection-agent.js';
 
 // Bridge (OpenClaw node integration)
 export { NodeBridge } from './bridge/node-bridge.js';
