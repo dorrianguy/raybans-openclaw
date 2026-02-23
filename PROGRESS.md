@@ -4,6 +4,159 @@ _Updated by Night Shift agent + daytime development._
 
 ---
 
+## 2026-02-22 — Night Shift #12 (Security Agent + Meeting Intelligence + Inspection Agent)
+
+### What Was Built
+
+#### 1. Security Agent (`src/agents/security-agent.ts`)
+- **The watchdog** — passive threat detection and situational awareness
+- **QR Code Analysis:** Decodes QR codes and analyzes destination URLs for risk
+  - URL shortener detection (17 known shortener domains)
+  - Suspicious TLD detection (20+ risky TLDs like .xyz, .top, .club)
+  - Brand impersonation detection (PayPal, Google, Apple, Amazon, etc.)
+  - Known safe domain list to prevent false positives
+  - IP address URLs, excessive subdomains, homograph attack detection
+  - Risk scoring 0-1 with human-readable explanations
+- **Document/Contract Analysis:** 10 risky clause categories:
+  - Auto-renewal traps, non-compete clauses, hidden fees
+  - Binding arbitration, cancellation penalties, liability waivers
+  - Data collection, price escalation, IP transfer, termination clauses
+  - Each flag includes severity, plain-English explanation, and actionable advice
+- **Phishing Screen Detection:** 8 patterns matching common social engineering:
+  - Account suspension scams, prize/winner scams, wire transfer scams
+  - Unusual login alerts, urgent action required messages
+- **Sensitive Data Exposure:** Detects passwords, API keys, SSH keys, Stripe keys, AWS keys, GitHub tokens, possible SSNs visible on screen
+- **Physical Security** (deep scan mode): ATM skimmer indicators, suspicious USB drops
+- **Threat Levels:** critical/high/medium/low with configurable TTS alert thresholds
+- **Scan history, statistics, trusted domain management**
+- **69 tests**
+
+#### 2. Meeting Intelligence Agent (`src/agents/meeting-agent.ts`)
+- **Your invisible meeting assistant** — captures everything so you can stay present
+- **Meeting Lifecycle:** Start/pause/resume/end with full state management
+- **Transcript Processing:**
+  - Speaker tracking with automatic participant detection
+  - Configurable transcript length limits
+- **Action Item Auto-Detection** — 7 regex patterns:
+  - "I'll do X by Friday" → owner + task + deadline
+  - "John will fix the bug" → named owner + task
+  - "We need to update X by Monday" → task + deadline
+  - "Can Dave please review X?" → named owner + task
+  - "Action item: Sarah - review PR" → explicit command
+  - "TODO: X" → task extraction
+  - "Let's make sure X does Y" → delegated task
+- **Decision Auto-Detection** — 6 patterns:
+  - "We decided to use X", "Let's go with X", "We're going with X"
+  - "The decision is X", "Final answer is X", "We'll use X"
+- **Question Detection** — captures open questions for follow-up
+- **Visual Capture:** Slides, whiteboards, screens, documents
+  - Change detection via Jaccard similarity on word sets
+  - Only stores when content changes significantly (configurable threshold)
+  - Content type classification
+- **Summary Generation:**
+  - Executive summary (3-5 sentences)
+  - Full markdown report with sections: decisions, action items, topics, open questions, notes, visual captures, transcript excerpt
+  - Voice-friendly TTS summary for post-meeting delivery
+- **Manual Input:** Annotations, action items, decisions, topics
+- **70 tests**
+
+#### 3. Inspection Agent (`src/agents/inspection-agent.ts`)
+- **Walk through any space, get a professional report** — hands-free documentation
+- **6 Inspection Types:** property, server room, construction, warehouse, vehicle, general
+- **Section/Room Management:**
+  - Navigate between areas: "Next room: Kitchen"
+  - Per-section image counts, findings, notes, condition assessments
+  - Configurable max sections
+- **Auto-Finding Detection** — 33+ patterns across all inspection types:
+  - **Property (10):** Water damage, mold (critical), wall cracks, peeling paint, broken windows, tile damage, safety devices, exposed wiring (critical), floor stains, rust/corrosion
+  - **Server Room (6):** Cable management, thermal issues, missing labels, capacity limits, dust, warning LEDs
+  - **Construction (5):** PPE violations (critical), fall/trip hazards, unsecured scaffolding (critical), work progress, defects
+  - **Warehouse (5):** Blocked exits (critical), damaged racking, spills, overloading, disorganization
+  - **Vehicle (5):** Body damage, rust/corrosion, tire wear, warning lights, windshield damage
+  - **General (2):** Damage/defect detection, safety hazards
+- **Finding Severity:** critical/major/minor/informational with emoji indicators
+- **Overall Condition Assessment:** Algorithm based on finding counts and severity → excellent/good/fair/poor/critical
+- **Report Generation:**
+  - Professional markdown with severity-coded findings per section
+  - Executive summary with finding counts
+  - Estimated remediation costs
+  - Area inspection table
+  - Voice-friendly TTS summary
+- **67 tests**
+
+#### 4. Revenue Brainstorming — 6 New Ideas
+- **#35 Contract Negotiation Assistant** — "Never Sign Blind" ($9.99-499/mo, $350B legal services market). Grammarly for contracts.
+- **#36 Grocery Nutrition Coach** — "Eat Smarter Without Trying" ($7.99-49.99/mo, $860B grocery + $30B diabetes management). Allergy alerts, nutrition scoring.
+- **#37 Real Estate Open House Navigator** — Auto-document every room, compare properties ($14.99-199/mo, 5.4M homes sold/year).
+- **#38 Pharmacy Medication Verifier** — Pill identification + interaction checking ($9.99-999/mo, $600B prescription market, LIFE-SAVING feature).
+- **#39 Thrift Store Treasure Hunter** — Instant resale value for any item ($19.99-99.99/mo, $18B thrift + $50B resale, 9/10 viral).
+- **#40 Personal Safety Escort** — "Walk Home Safer" ($4.99-29.99/mo, $3B personal safety, MOVEMENT-level impact).
+
+### Stats
+- **7 files** (3 modules + 3 test suites + updated index)
+- **~5,879 lines of code** added
+- **573 total tests** (206 new this session, all passing)
+- **6 new revenue ideas** documented with full specs
+- **40 total revenue ideas** in REVENUE-FEATURES.md
+
+### Architecture After Tonight
+```
+src/
+├── types.ts                              # 30+ shared interfaces & types
+├── index.ts                              # Public API (updated)
+├── vision/
+│   └── vision-pipeline.ts                # Image → structured analysis
+├── inventory/
+│   ├── inventory-state.ts                # Running inventory state
+│   ├── inventory-state.test.ts           # 42 tests
+│   ├── product-database.ts              # UPC lookup + caching
+│   ├── product-database.test.ts         # 24 tests
+│   ├── export-service.ts                # CSV/JSON/report generation
+│   └── export-service.test.ts           # 28 tests
+├── voice/
+│   ├── voice-command-router.ts          # Voice command parsing (enhanced)
+│   └── voice-command-router.test.ts     # 50 tests
+├── bridge/
+│   ├── node-bridge.ts                   # OpenClaw node integration
+│   ├── node-bridge.test.ts              # 21 tests
+│   ├── image-scheduler.ts              # Smart auto-capture
+│   └── image-scheduler.test.ts          # 19 tests
+├── storage/
+│   ├── persistence.ts                   # SQLite persistence layer
+│   └── persistence.test.ts              # 38 tests
+├── routing/
+│   ├── context-router.ts               # Intelligent image routing
+│   └── context-router.test.ts           # 27 tests
+├── agents/
+│   ├── inventory-agent.ts               # Inventory orchestrator
+│   ├── memory-agent.ts                  # Perfect Memory
+│   ├── memory-agent.test.ts             # 24 tests
+│   ├── networking-agent.ts              # Badge/card scanner
+│   ├── networking-agent.test.ts         # 30 tests
+│   ├── deal-agent.ts                    # Price intelligence
+│   ├── deal-agent.test.ts              # 50 tests
+│   ├── security-agent.ts               # ← NEW: Threat detection
+│   ├── security-agent.test.ts           # 69 tests
+│   ├── meeting-agent.ts                # ← NEW: Meeting intelligence
+│   ├── meeting-agent.test.ts            # 70 tests
+│   ├── inspection-agent.ts             # ← NEW: Walkthrough reports
+│   └── inspection-agent.test.ts         # 67 tests
+├── integration/
+│   └── e2e-flow.test.ts                # 14 end-to-end tests
+└── dashboard/
+    └── api-server.ts                    # REST API + SSE for dashboard
+```
+
+### What's Next (Priority)
+1. **Web Dashboard UI** — React frontend connecting to the API server
+2. **Context Chain Engine** — Feature #10: multi-agent workflows (pre-meeting → during → post)
+3. **Store Layout Mapping** — Aisle/section tracking with GPS correlation
+4. **Translation Agent** — Feature #9: multilingual OCR + cultural context
+5. **Context-Aware Assistant** — Feature #8: identifies what you're looking at by context
+6. **Debug Agent** — Feature #6: look at code/errors, get fixes through speaker
+
+---
+
 ## 2026-02-21 — Night Shift #11 (Context Router + Networking Agent + Deal Analysis)
 
 ### What Was Built
@@ -396,10 +549,13 @@ src/
 | Networking Agent | 🟢 | Badge/card OCR, research, briefings, dedup |
 | Deal Analysis Agent | 🟢 | Products/vehicles/real estate, verdicts, negotiation |
 | Integration Tests | 🟢 | 14 E2E flow tests with mock vision |
-| Unit Tests | 🟢 | 367 tests, all passing |
+| Unit Tests | 🟢 | 573 tests, all passing |
+| Security Agent | 🟢 | QR decode, URL analysis, document risk, phishing detection, sensitive data, physical security |
+| Meeting Intel Agent | 🟢 | Transcript, action items, decisions, visual capture, summaries |
+| Inspection Agent | 🟢 | 6 types, 33+ auto-patterns, professional reports |
 | Dashboard UI | 🔴 | React frontend planned |
-| Security Agent | 🔴 | QR decode, threat detection |
-| Meeting Intel Agent | 🔴 | Transcription + slides + actions |
-| Inspection Agent | 🔴 | Property/site walkthrough reports |
 | Context Chain Engine | 🔴 | Multi-agent workflow orchestration |
 | Store Layout Mapping | 🔴 | Aisle tracking + GPS |
+| Translation Agent | 🔴 | Multilingual OCR + cultural context |
+| Debug Agent | 🔴 | Code/error analysis via vision |
+| Context-Aware Assistant | 🔴 | Contextual help (kitchen, gym, etc.) |

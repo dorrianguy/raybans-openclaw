@@ -362,6 +362,7 @@ _Format: Feature name | Target | Pain point | Monetization | Rough market size_
 - **Partnership play:** Partner with Google Arts & Culture (they have the image database). Partner with Airbnb Experiences for "AI-guided museum tours." White-label for museum chains (Smithsonian, Metropolitan, etc.).
 
 #### 34. Parking Lot Asset Tracker — Commercial Fleet Intelligence
+_Last updated: 2026-02-22_
 - **Target:** Car dealerships, rental car companies, trucking fleet managers, airport parking operators
 - **Pain point:** A car dealership with 500 vehicles on a 10-acre lot loses track of cars constantly. "Where's the blue Civic we got Tuesday?" means sending someone to walk the entire lot. Rental companies at airports have thousands of vehicles across multiple lots. Fleet managers need to know: where is every vehicle, what's its condition, is it ready to sell/rent?
 - **How:** Walk the lot wearing glasses. AI auto-reads every license plate, matches to inventory database, logs location (GPS + visual landmarks). "That's a 2024 Accord EX-L, Stock #4782, been on the lot 45 days, priced at $31,500. Average days-to-sale for this model is 28 — consider a price adjustment." For rental: "Vehicle R-1847 is returned, front bumper has a new 4-inch scratch on passenger side — log damage, estimate repair at $350."
@@ -369,4 +370,62 @@ _Format: Feature name | Target | Pain point | Monetization | Rough market size_
 - **Why 10x:** A lot porter at a dealership earns $15-18/hr and spends 2-3 hours/day doing lot audits. That's $100-150/day. Plus aged inventory loses $20-40/day in depreciation — identifying it faster saves thousands. For rental companies, untracked damage costs $200-500M/year industry-wide.
 - **Market size:** 18,000+ car dealerships in the US. Rental car industry: $40B. Fleet management: $25B. Commercial parking: $30B.
 - **Data play:** Aggregated lot data (what's selling, what's sitting, regional pricing trends) is worth millions to manufacturers and financial analysts.
+
+### 🌙 Night Shift Ideas (2026-02-22)
+
+#### 35. Contract Negotiation Assistant — "Never Sign Blind"
+- **Target:** Freelancers, small business owners, real estate buyers, anyone signing contracts
+- **Pain point:** 73% of Americans sign contracts without fully reading them. Legal review costs $300-500/hr. People miss auto-renewal traps, non-competes, hidden fees, and liability waivers buried in fine print. The average apartment lease has 15-20 pages; a SaaS Terms of Service can be 30+.
+- **How:** Look at any contract/document → glasses OCR the text → AI instantly flags risky clauses: auto-renewal, cancellation penalties, non-compete, binding arbitration, data collection, IP transfer, price escalation, liability waivers. Each flag includes plain-English explanation + advice. Voice summary: "This contract has 4 concerns: there's a 24-month auto-renewal, a $500 early termination fee, mandatory arbitration, and they can raise prices annually without notice."
+- **Pricing:** $9.99/mo consumer (5 scans/mo), $29.99/mo pro (unlimited + history), $149/mo business (team sharing + contract comparison), $499/mo legal team (API + integrations + custom clause library).
+- **Why 10x:** A single hour of legal review costs $300-500. This does 80% of what a lawyer's first pass does for $30/mo. One caught auto-renewal trap or cancellation penalty pays for years of subscription.
+- **Market size:** US legal services: $350B. Contract management software: $2.1B. 33M small businesses that can't afford lawyers for every contract. 44M renter households signing leases.
+- **Killer angle:** This is the "Grammarly for contracts" — it doesn't replace a lawyer, it gives you a fighting chance when you can't afford one. Massive consumer appeal + viral potential ("My glasses saved me from a $500 early termination fee").
+
+#### 36. Grocery Nutrition Coach — "Eat Smarter Without Trying"
+- **Target:** People with dietary restrictions, diabetics, parents of kids with allergies, fitness enthusiasts, weight loss programs
+- **Pain point:** 32M Americans have food allergies. 37M have diabetes. Reading nutrition labels in a grocery store is tedious, slow, and easy to miss hidden ingredients (like "casein" = dairy, or "maltodextrin" = high glycemic). Comparing products takes forever. Diet apps require manual entry.
+- **How:** Walk through the grocery store. Look at any product → glasses read the label → AI checks against YOUR dietary profile: "Warning: this contains 42g sugar per serving. Your daily target is 25g. It also has palm oil, which you flagged." Automatic product comparison: "The store brand has 30% less sodium for $2 less." Allergy alerts: "STOP — this contains tree nuts (listed as 'praline')." Weekly shopping score.
+- **Pricing:** Free tier (3 scans/day), $7.99/mo health (unlimited + dietary profiles), $14.99/mo family (multiple profiles for household), $49.99/mo clinical (dietitian tools + patient management + HIPAA). Insurance-reimbursable for diabetics under preventive care.
+- **Why 10x:** A single allergic reaction ER visit costs $1,500-5,000. For diabetics, poor diet management costs the healthcare system $327B/year. Even if this prevents ONE dietary mistake per month, it pays for itself 100x.
+- **Market size:** US grocery: $860B. Health & wellness food: $200B. Diabetes management devices: $30B. Diet app market: $4.2B.
+- **Partnership play:** Partner with Noom, MyFitnessPal, or Weight Watchers for auto-logging. Partner with grocery chains for sponsored healthier alternatives. Medical partnerships for diabetic programs (insurance reimbursement = guaranteed revenue).
+
+#### 37. Real Estate Open House Navigator — "House-Hunting Superpower"
+- **Target:** Home buyers, real estate investors, house flippers, rental property seekers
+- **Pain point:** Buyers visit 10-15 homes before purchasing. After the 5th open house, they all blur together. Taking notes while walking through a house is awkward. You forget which house had the updated kitchen vs. the one with the big backyard. Comparing homes is a mess of photos, notes, and fading memory. Investors need to quickly estimate renovation costs on the spot.
+- **How:** Walk through any open house wearing glasses. AI auto-documents every room: dimensions (estimated from visual cues), condition, fixtures, finishes. Auto-generates a standardized property report: room count, approximate square footage, condition scoring per room, renovation estimates. Compare side-by-side with other properties you've toured. Voice notes: "Bathroom needs new vanity, estimate $800." After the tour: full property scorecard synced to your phone.
+- **Pricing:** $14.99/mo buyer (up to 10 properties/mo), $49.99/mo investor (unlimited + renovation estimator + comp analysis + ROI calculator), $199/mo flipper (team sharing + contractor integration + before/after tracking).
+- **Why 10x:** The average home buyer spends 10 weeks searching. The stress of comparing 15 homes from memory is real. For investors, a missed renovation cost can mean $10-50K in unexpected expenses. This replaces a $200 home inspection for preliminary screening.
+- **Market size:** 5.4M existing homes sold/year in US. 2M+ real estate investors. Home inspection industry: $5B. Real estate tech: $14B.
+- **Content angle:** "I toured 5 houses with AI glasses — here's what they found" — perfect YouTube/TikTok content. Every first-time home buyer would share this.
+
+#### 38. Pharmacy Medication Verifier — "Second Pair of Eyes"
+- **Target:** Elderly patients, caregivers, home health aides, people on multiple medications, pharmacies (QC)
+- **Pain point:** Medication errors affect 1.5M Americans/year and cause 125,000 deaths. Patients on 5+ medications (40% of seniors) can't tell pills apart. Pharmacies fill 4B prescriptions/year with a 1-2% error rate = 40-80M errors. Caregivers managing medications for elderly parents are terrified of giving the wrong pill. Generic drugs look identical across different manufacturers.
+- **How:** Look at any pill → glasses identify it by shape, color, size, and imprint code → AI confirms: "Round white tablet, imprint 'M367' — that's Hydrocodone/Acetaminophen 10/325mg. This matches your prescription." Interaction check: "Warning: this should not be taken with Warfarin, which is also in your medication list." Pill sorting assistance for weekly organizers. Expiration date checking.
+- **Pricing:** $9.99/mo patient (unlimited scans + medication list management), $29.99/mo caregiver (manage multiple patients), $199/mo pharmacy (QC verification + error logging), $999/mo hospital (integration with EHR systems + HIPAA).
+- **Why 10x:** Average medication error lawsuit: $500K-2M. Average ER visit from adverse drug interaction: $3,000-10,000. For pharmacies, one prevented error saves $100K+ in liability. For patients, this is literally life-saving for $10/mo.
+- **Market size:** US prescription drug market: $600B. Medication management: $2B. 4.3B prescriptions filled/year. 55M Americans 65+, most on 5+ medications.
+- **Regulatory path:** Position as a "reference tool" (not diagnostic). Pursue FDA 510(k) for Class II medical device status eventually. Once FDA-cleared, insurance covers it → subscription revenue becomes recurring medical billing.
+- **The human angle:** "My glasses caught a medication error that could have killed my grandmother" — this is the story that gets Dorrian on CNN and 60 Minutes. Not just revenue — LEGACY.
+
+#### 39. Thrift Store / Estate Sale Treasure Hunter — "Hidden Gem Detector"
+- **Target:** Resellers (eBay, Poshmark, Depop), antique hunters, thrift store regulars, estate sale shoppers, pawn shop buyers
+- **Pain point:** Thrift stores and estate sales have thousands of items with no price intelligence. A $3 thrift store find could be worth $300 on eBay — but only if you know what to look for. Resellers spend hours researching each item manually on their phone. Estate sales are time-pressured (first come, first served). Missing a valuable item means someone else gets it.
+- **How:** Walk through a thrift store or estate sale. Look at any item → glasses identify the brand, model, condition, and era → AI searches completed eBay listings, Poshmark, etc. for resale value. "That's a vintage Pyrex 443 Cinderella bowl in Butterprint. Recent eBay sales: $45-65. Thrift store price: $4. Profit margin: 10-16x." For clothing: brand detection, size, fabric, vintage vs. modern, market demand. For electronics: model identification, working condition indicators, market value.
+- **Pricing:** $19.99/mo hobbyist (50 scans/mo), $39.99/mo reseller (unlimited + profit calculator + inventory tracker + auto-listing draft), $99.99/mo power seller (batch scanning + market trends + pricing algorithm + multi-platform sync).
+- **Why 10x:** Top thrift store resellers make $2-10K/month. One missed treasure per trip = $50-500 in lost profit. This tool pays for itself with a single find per month. The information asymmetry in reselling is MASSIVE — this closes the gap.
+- **Market size:** US thrift store industry: $18B (growing 25% YoY — fastest in retail). Online resale: $50B. 64M Americans shopped secondhand in 2024. Estate sale industry: $5B.
+- **Viral factor:** 9/10. "I found a $500 item at Goodwill for $3 using AI glasses" is PEAK TikTok/YouTube content. Every thrifting creator (millions of followers in this niche) would feature this.
+
+#### 40. Personal Safety Escort — "Walk Home Safer"
+- **Target:** Women walking alone, college students, late-night workers, delivery drivers, anyone in unfamiliar areas
+- **Pain point:** 1 in 3 women report feeling unsafe walking at night. 81% of women have experienced sexual harassment. Safety apps exist but require pulling out your phone, which is itself a vulnerability. Pepper spray and personal alarms are reactive, not preventive. People walking alone at night have zero situational awareness when looking at their phone.
+- **How:** Glasses passively monitor your surroundings while walking. AI tracks: people in proximity (count, distance, approaching vs. passing), environmental awareness (well-lit vs. dark areas, open vs. enclosed spaces), route analysis (staying on main roads vs. isolated paths). Alerts: "Person approaching from behind, 20 feet. They've been following your route for 2 blocks." Auto-features: continuous GPS tracking shared with emergency contacts, one-word voice trigger for emergency ("Crimson" → alerts contacts + starts recording audio/video + calls 911 with GPS location), post-walk safety summary.
+- **Pricing:** Free tier (basic alerts, 3 walks/week), $4.99/mo personal (unlimited + emergency contacts + route sharing), $9.99/mo premium (live monitoring by safety partner + insurance), $29.99/mo family (manage 5 people + geofencing + arrival notifications).
+- **Why 10x:** Peace of mind is priceless. But concretely: personal safety devices (Birdie, She's Birdie) sell for $30-50 one-time and are far less capable. Security escort services charge $50-100/hour. This provides continuous awareness for $5/mo.
+- **Market size:** Personal safety devices: $3B. Personal safety apps: $1.2B. Women's safety market: growing 15% YoY. 330M+ Americans who walk somewhere at night.
+- **Impact + PR:** This is the second "change the world" feature (after Accessibility Vision). It won't just be a product — it'll be a MOVEMENT. "Walk home safer with AI glasses" is a message that resonates with every parent, partner, and person who's ever felt unsafe. Media coverage would be astronomical. University campus partnerships would drive adoption.
+- **Data play (careful):** Anonymized, aggregated walk safety data could help cities identify dangerous areas, improve lighting, and deploy police resources. Municipal partnerships.
 
