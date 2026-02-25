@@ -18,6 +18,7 @@
 
 import * as http from 'http';
 import { EventEmitter } from 'eventemitter3';
+import { WebSocketServer } from 'ws';
 import type {
   InventorySession,
   InventoryItem,
@@ -122,6 +123,19 @@ export class DashboardApiServer extends EventEmitter<DashboardApiEvents> {
         this.handleRequest(req, res).catch((err) => {
           this.sendError(res, 500, String(err));
         });
+      });
+
+      // WebSocket upgrade handler for /api/companion
+      const wss = new WebSocketServer({ noServer: true });
+      this.server.on('upgrade', (req, socket, head) => {
+        const url = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`);
+        if (url.pathname === '/api/companion') {
+          wss.handleUpgrade(req, socket as any, head, (ws) => {
+            this.companionWs.registerClient(ws);
+          });
+        } else {
+          socket.destroy();
+        }
       });
 
       this.server.listen(this.config.port, this.config.host, () => {
