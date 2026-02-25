@@ -1,0 +1,128 @@
+name: Build iOS IPA
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'companion-app/**'
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    name: Build iOS Ad Hoc IPA
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: companion-app/package-lock.json
+
+      - name: Install dependencies
+        working-directory: companion-app
+        run: npm ci
+
+      - name: Import Distribution Certificate
+        run: |
+          echo "${{ secrets.DIST_CERT_P12 }}" | base64 --decode > /tmp/dist-cert.p12
+          security create-keychain -p "buildchain" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "buildchain" build.keychain
+          security import /tmp/dist-cert.p12 -k ~/Library/Keychains/build.keychain -P "${{ secrets.DIST_CERT_PASSWORD }}" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "buildchain" ~/Library/Keychains/build.keychain
+          security set-keychain-settings -lut 21600 ~/Library/Keychains/build.keychain
+          security find-identity -v -p codesigning
+
+      - name: Install Provisioning Profile
+        run: |
+          echo "${{ secrets.PROVISIONING_PROFILE }}" | base64 --decode > /tmp/profile.mobileprovision
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          PROFILE_UUID=$(python3 -c "
+          import plistlib
+          data = open('/tmp/profile.mobileprovision', 'rb').read()
+          start = data.find(b'<?xml')
+          end = data.find(b'</plist>') + len(b'</plist>')
+          plist = plistlib.loads(data[start:end])
+          print(plist['UUID'])
+          ")
+          cp /tmp/profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/${PROFILE_UUID}.mobileprovision
+          echo "Installed provisioning profile UUID: $PROFILE_UUID"
+
+      - name: Expo Prebuild
+        working-directory: companion-app
+        run: npx expo prebuild --platform ios --clean
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install CocoaPods dependencies
+        working-directory: companion-app/ios
+        run: pod install
+
+      - name: Find Xcode workspace and scheme
+        id: xcode
+        working-directory: companion-app/ios
+        run: |
+          WORKSPACE=$(find . -name "*.xcworkspace" -maxdepth 1 | head -1 | xargs basename)
+          SCHEME=$(basename "$WORKSPACE" .xcworkspace)
+          echo "workspace=$WORKSPACE" >> $GITHUB_OUTPUT
+          echo "scheme=$SCHEME" >> $GITHUB_OUTPUT
+          echo "Found workspace: $WORKSPACE"
+          echo "Using scheme: $SCHEME"
+
+      - name: Create exportOptions.plist
+        run: |
+          cat > /tmp/exportOptions.plist << 'PLISTEOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>ad-hoc</string>
+            <key>teamID</key>
+            <string>K9Z42X89GK</string>
+            <key>compileBitcode</key>
+            <false/>
+            <key>signingStyle</key>
+            <string>manual</string>
+            <key>provisioningProfiles</key>
+            <dict>
+              <key>com.siberius.raybans.companion</key>
+              <string>RayBans Companion AdHoc</string>
+            </dict>
+          </dict>
+          </plist>
+          PLISTEOF
+
+      - name: Build Xcode Archive
+        working-directory: companion-app/ios
+        run: |
+          xcodebuild clean archive \
+            -workspace "${{ steps.xcode.outputs.workspace }}" \
+            -scheme "${{ steps.xcode.outputs.scheme }}" \
+            -configuration Release \
+            -archivePath "$RUNNER_TEMP/app.xcarchive" \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE_SPECIFIER="RayBans Companion AdHoc" \
+            -destination "generic/platform=iOS" \
+            -allowProvisioningUpdates 2>&1 | tail -100
+
+      - name: Export IPA
+        run: |
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/app.xcarchive" \
+            -exportOptionsPlist /tmp/exportOptions.plist \
+            -exportPath "$RUNNER_TEMP/ipa"
+          ls -la "$RUNNER_TEMP/ipa/"
+
+      - name: Upload IPA as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: raybans-companion-ipa-${{ github.run_number }}
+          path: ${{ runner.temp }}/ipa/*.ipa
+          retention-days: 30
+          if-no-files-found: error
