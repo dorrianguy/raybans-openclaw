@@ -25,6 +25,33 @@ jobs:
         working-directory: companion-app
         run: npm install
 
+      - name: Patch expo-modules-core to use compiled JS instead of TypeScript source
+        working-directory: companion-app
+        run: |
+          node -e "
+          const fs = require('fs');
+          const path = 'node_modules/expo-modules-core/package.json';
+          try {
+            const pkg = JSON.parse(fs.readFileSync(path, 'utf8'));
+            function fixPath(p) {
+              if (typeof p === 'string' && p.includes('/src/') && p.endsWith('.ts')) {
+                return p.replace('/src/', '/build/').replace('.ts', '.js');
+              }
+              if (typeof p === 'object' && p !== null) {
+                return Object.fromEntries(Object.entries(p).map(([k,v]) => [k, fixPath(v)]));
+              }
+              return p;
+            }
+            if (pkg.exports) {
+              pkg.exports = fixPath(pkg.exports);
+              fs.writeFileSync(path, JSON.stringify(pkg, null, 2));
+              console.log('Patched expo-modules-core exports to use compiled JS');
+            } else {
+              console.log('No exports field to patch');
+            }
+          } catch(e) { console.log('Patch skipped:', e.message); }
+          "
+
       - name: Import Distribution Certificate
         run: |
           echo "${{ secrets.DIST_CERT_P12 }}" | base64 --decode > /tmp/dist-cert.p12
@@ -56,7 +83,6 @@ jobs:
         run: npx expo prebuild --platform ios --clean
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-          NODE_OPTIONS: '--experimental-strip-types --experimental-require-module'
 
       - name: Install CocoaPods dependencies
         working-directory: companion-app/ios
