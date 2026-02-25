@@ -23,7 +23,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: companion-app
-        run: npm install
+        run: npm ci
 
       - name: Patch expo-modules-core to use compiled JS instead of TypeScript source
         working-directory: companion-app
