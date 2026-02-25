@@ -144,6 +144,53 @@ export type {
 export { DashboardApiServer } from './dashboard/api-server.js';
 export type { DashboardApiConfig, DashboardApiEvents } from './dashboard/api-server.js';
 
+// Translation Agent
+export { TranslationAgent, detectLanguage, getLanguageName, classifyContent, parseMenuItems } from './agents/translation-agent.js';
+export type {
+  TranslationConfig,
+  TranslationMode,
+  TranslationResult,
+  TranslatedContentType,
+  MenuTranslation,
+  CulturalBriefing,
+  EtiquetteRule,
+  PhraseEntry,
+  TranslationAgentStats,
+} from './agents/translation-agent.js';
+
+// Debug Agent
+export { DebugAgent, detectProgrammingLanguage, classifyDebugContent, parseErrors, findFixes, extractLineNumbers } from './agents/debug-agent.js';
+export type {
+  DebugConfig,
+  DebugAnalysis,
+  DebugContentType,
+  ProgrammingLanguage,
+  DebugProblem,
+  ProblemCategory,
+  DebugFix,
+  DebugSession,
+  DebugAgentStats,
+} from './agents/debug-agent.js';
+
+// Context-Aware Agent
+export { ContextAgent, detectContext, checkNutritionAlerts, lookupBoltSpec } from './agents/context-agent.js';
+export type {
+  ContextConfig,
+  ContextType,
+  ContextDetection,
+  ContextResponse,
+  IdentifiedItem,
+  ContextInfo,
+  ContextAlert,
+  UserPreferences,
+  DietaryProfile,
+  DietaryRestriction,
+  FitnessProfile,
+  ActiveTask,
+  TaskProgress,
+  ContextAgentStats,
+} from './agents/context-agent.js';
+
 // Companion WebSocket
 export { CompanionWebSocketHandler } from './dashboard/companion-ws.js';
 export type { CompanionWSConfig, CompanionWSEvents } from './dashboard/companion-ws.js';
