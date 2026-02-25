@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22'
 
       - name: Install dependencies
         working-directory: companion-app
@@ -56,6 +56,7 @@ jobs:
         run: npx expo prebuild --platform ios --clean
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          NODE_OPTIONS: '--experimental-strip-types --experimental-require-module'
 
       - name: Install CocoaPods dependencies
         working-directory: companion-app/ios
