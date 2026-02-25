@@ -1,0 +1,58 @@
+{
+  "expo": {
+    "name": "Ray-Bans Companion",
+    "slug": "raybans-companion",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "raybans-companion",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0a0a0a"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.siberius.raybans.companion",
+      "infoPlist": {
+        "NSBluetoothAlwaysUsageDescription": "Connect to Ray-Ban Meta smart glasses",
+        "NSBluetoothPeripheralUsageDescription": "Connect to Ray-Ban Meta smart glasses",
+        "NSMicrophoneUsageDescription": "Voice commands for Siberius AI",
+        "NSLocationWhenInUseUsageDescription": "Geo-tag captures from glasses",
+        "NSSpeechRecognitionUsageDescription": "Process voice commands"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0a0a0a"
+      },
+      "package": "com.siberius.raybans.companion",
+      "permissions": [
+        "android.permission.BLUETOOTH",
+        "android.permission.BLUETOOTH_ADMIN",
+        "android.permission.BLUETOOTH_CONNECT",
+        "android.permission.BLUETOOTH_SCAN",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.CAMERA"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-speech",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Geo-tag captures from glasses"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

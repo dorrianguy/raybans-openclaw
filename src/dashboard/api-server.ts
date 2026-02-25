@@ -23,6 +23,8 @@ import type {
   InventoryItem,
 } from '../types.js';
 import type { PersistenceLayer, ItemQuery, SessionQuery, MemoryQuery } from '../storage/persistence.js';
+import { CompanionWebSocketHandler } from './companion-ws.js';
+import type { ContextRouter, SpecialistAgent } from '../routing/context-router.js';
 
 // ─── Configuration ──────────────────────────────────────────────
 
@@ -81,10 +83,32 @@ export class DashboardApiServer extends EventEmitter<DashboardApiEvents> {
   private liveSession: InventorySession | null = null;
   private liveItems: InventoryItem[] = [];
 
+  /** Companion app WebSocket handler */
+  private companionWs: CompanionWebSocketHandler;
+
+  /** Context router reference for companion API endpoints */
+  private contextRouter: ContextRouter | null = null;
+
   constructor(persistence: PersistenceLayer, config: DashboardApiConfig) {
     super();
     this.config = { ...DEFAULT_CONFIG, ...config } as Required<DashboardApiConfig>;
     this.persistence = persistence;
+    this.companionWs = new CompanionWebSocketHandler({ debug: config.debug });
+  }
+
+  /**
+   * Set the context router for companion API endpoints.
+   */
+  setContextRouter(router: ContextRouter): void {
+    this.contextRouter = router;
+    this.companionWs.setContextRouter(router);
+  }
+
+  /**
+   * Get the companion WebSocket handler (for external integration).
+   */
+  getCompanionWs(): CompanionWebSocketHandler {
+    return this.companionWs;
   }
 
   // ─── Lifecycle ──────────────────────────────────────────────
@@ -249,6 +273,13 @@ export class DashboardApiServer extends EventEmitter<DashboardApiEvents> {
         await this.handleMemoryStats(req, res);
       } else if (pathname === '/api/events' && method === 'GET') {
         await this.handleSSE(req, res);
+      } else if (pathname === '/api/agents' && method === 'GET') {
+        await this.handleGetAgents(req, res);
+      } else if (pathname.startsWith('/api/agents/') && method === 'POST') {
+        const agentId = pathname.split('/')[3];
+        await this.handleSetAgentEnabled(req, res, agentId);
+      } else if (pathname === '/api/routing/stats' && method === 'GET') {
+        await this.handleRoutingStats(req, res);
       } else {
         this.sendError(res, 404, `Not found: ${pathname}`);
       }
@@ -522,6 +553,65 @@ export class DashboardApiServer extends EventEmitter<DashboardApiEvents> {
       totalSessions: dbStats.sessions,
       totalItems: dbStats.items,
       dbSizeBytes: dbStats.dbSizeBytes,
+    });
+  }
+
+  // ─── Companion / Agent API Handlers ──────────────────────────
+
+  private async handleGetAgents(
+    _req: http.IncomingMessage,
+    res: http.ServerResponse,
+  ): Promise<void> {
+    if (!this.contextRouter) {
+      this.sendJson(res, { agents: [] });
+      return;
+    }
+
+    const agents = this.contextRouter.getAgents().map((a: SpecialistAgent) => ({
+      id: a.id,
+      name: a.name,
+      enabled: a.enabled,
+      priority: a.priority,
+    }));
+
+    this.sendJson(res, { agents });
+  }
+
+  private async handleSetAgentEnabled(
+    req: http.IncomingMessage,
+    res: http.ServerResponse,
+    agentId: string,
+  ): Promise<void> {
+    if (!this.contextRouter) {
+      this.sendError(res, 503, 'Context router not available');
+      return;
+    }
+
+    const body = await this.readBody(req);
+    const { enabled } = JSON.parse(body);
+
+    this.contextRouter.setAgentEnabled(agentId, enabled);
+    this.sendJson(res, { ok: true, agentId, enabled });
+  }
+
+  private async handleRoutingStats(
+    _req: http.IncomingMessage,
+    res: http.ServerResponse,
+  ): Promise<void> {
+    if (!this.contextRouter) {
+      this.sendJson(res, {});
+      return;
+    }
+
+    this.sendJson(res, this.contextRouter.getStats());
+  }
+
+  private async readBody(req: http.IncomingMessage): Promise<string> {
+    return new Promise((resolve, reject) => {
+      let body = '';
+      req.on('data', (chunk) => { body += chunk; });
+      req.on('end', () => resolve(body));
+      req.on('error', reject);
     });
   }
 

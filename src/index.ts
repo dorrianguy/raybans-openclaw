@@ -143,3 +143,7 @@ export type {
 // Dashboard API
 export { DashboardApiServer } from './dashboard/api-server.js';
 export type { DashboardApiConfig, DashboardApiEvents } from './dashboard/api-server.js';
+
+// Companion WebSocket
+export { CompanionWebSocketHandler } from './dashboard/companion-ws.js';
+export type { CompanionWSConfig, CompanionWSEvents } from './dashboard/companion-ws.js';
