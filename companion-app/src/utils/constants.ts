@@ -4,8 +4,8 @@
 
 // ─── Backend ────────────────────────────────────────────────────
 
-export const DEFAULT_BACKEND_URL = 'http://localhost:3847';
-export const DEFAULT_WS_URL = 'ws://localhost:3847';
+export const DEFAULT_BACKEND_URL = 'https://raybans-openclaw.onrender.com';
+export const DEFAULT_WS_URL = 'wss://raybans-openclaw.onrender.com';
 export const API_TIMEOUT_MS = 15_000;
 export const WS_RECONNECT_DELAY_MS = 3_000;
 export const WS_MAX_RECONNECT_ATTEMPTS = 10;
