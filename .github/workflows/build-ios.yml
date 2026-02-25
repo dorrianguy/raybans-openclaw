@@ -107,15 +107,18 @@ jobs:
       - name: Build Xcode Archive
         working-directory: companion-app/ios
         run: |
+          set -o pipefail
           xcodebuild clean archive \
             -workspace "${{ steps.xcode.outputs.workspace }}" \
             -scheme "${{ steps.xcode.outputs.scheme }}" \
             -configuration Release \
             -archivePath "$RUNNER_TEMP/app.xcarchive" \
             CODE_SIGN_IDENTITY="Apple Distribution" \
+            CODE_SIGN_STYLE="Manual" \
             PROVISIONING_PROFILE_SPECIFIER="RayBans Companion AdHoc" \
+            DEVELOPMENT_TEAM="K9Z42X89GK" \
             -destination "generic/platform=iOS" \
-            -allowProvisioningUpdates 2>&1 | tail -100
+            -allowProvisioningUpdates 2>&1 | tail -200
 
       - name: Export IPA
         run: |
