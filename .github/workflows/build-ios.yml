@@ -80,7 +80,10 @@ jobs:
 
       - name: Expo Prebuild
         working-directory: companion-app
-        run: npx expo prebuild --platform ios --clean
+        run: |
+          echo "Node version: $(node --version)"
+          echo "NODE_OPTIONS: $NODE_OPTIONS"
+          NODE_OPTIONS="" npx expo prebuild --platform ios --clean
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
