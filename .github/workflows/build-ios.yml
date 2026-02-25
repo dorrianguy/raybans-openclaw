@@ -23,7 +23,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: companion-app
-        run: npm ci
+        run: npm install
 
       - name: Import Distribution Certificate
         run: |
