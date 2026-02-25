@@ -86,6 +86,20 @@ export function useGlasses() {
 
     store.setProviderName(glasses.providerName);
 
+    // Auto-connect on startup if enabled
+    const { autoConnect, lastDeviceId, providerType } = useSettingsStore.getState();
+    if (autoConnect) {
+      glasses.scan().then((devices) => {
+        if (devices.length > 0) {
+          // Prefer last connected device, otherwise first found
+          const target = devices.find((d) => d.id === lastDeviceId) ?? devices[0];
+          return glasses.connect(target.id);
+        }
+      }).catch((err) => {
+        console.warn('[useGlasses] Auto-connect failed:', err.message);
+      });
+    }
+
     return () => {
       // Don't dispose on unmount — services are singletons
     };
