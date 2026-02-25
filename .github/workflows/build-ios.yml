@@ -19,38 +19,19 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '18'
 
       - name: Install dependencies
         working-directory: companion-app
         run: npm ci
 
-      - name: Patch expo-modules-core to use compiled JS instead of TypeScript source
+      - name: Fix ESM package plugin issues for Node 18
         working-directory: companion-app
         run: |
-          node -e "
-          const fs = require('fs');
-          const path = 'node_modules/expo-modules-core/package.json';
-          try {
-            const pkg = JSON.parse(fs.readFileSync(path, 'utf8'));
-            function fixPath(p) {
-              if (typeof p === 'string' && p.includes('/src/') && p.endsWith('.ts')) {
-                return p.replace('/src/', '/build/').replace('.ts', '.js');
-              }
-              if (typeof p === 'object' && p !== null) {
-                return Object.fromEntries(Object.entries(p).map(([k,v]) => [k, fixPath(v)]));
-              }
-              return p;
-            }
-            if (pkg.exports) {
-              pkg.exports = fixPath(pkg.exports);
-              fs.writeFileSync(path, JSON.stringify(pkg, null, 2));
-              console.log('Patched expo-modules-core exports to use compiled JS');
-            } else {
-              console.log('No exports field to patch');
-            }
-          } catch(e) { console.log('Patch skipped:', e.message); }
-          "
+          # expo-speech/build/Speech.js uses ESM (import statements) which Node 18 CJS require() can't load.
+          # Expo's config-plugin loader tries to require() it — add a no-op CJS shim to avoid the failure.
+          echo 'module.exports = function withExpoSpeech(config) { return config; };' > node_modules/expo-speech/app.plugin.js
+          echo 'Created CJS app.plugin.js shim for expo-speech'
 
       - name: Import Distribution Certificate
         run: |
@@ -80,10 +61,7 @@ jobs:
 
       - name: Expo Prebuild
         working-directory: companion-app
-        run: |
-          echo "Node version: $(node --version)"
-          echo "NODE_OPTIONS: $NODE_OPTIONS"
-          NODE_OPTIONS="" npx expo prebuild --platform ios --clean
+        run: npx expo prebuild --platform ios --clean
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
