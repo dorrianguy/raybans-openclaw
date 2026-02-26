@@ -15,9 +15,9 @@ primary_region = 'dfw'  # Dallas — closest to CST
 [http_service]
   internal_port = 3847
   force_https = true
-  auto_stop_machines = 'stop'    # Scale to zero when idle (saves $$$)
-  auto_start_machines = true     # Wake on incoming request
-  min_machines_running = 0       # Allow full scale-to-zero
+  auto_stop_machines = 'off'     # Keep always-on for WebSocket connections
+  auto_start_machines = true
+  min_machines_running = 1       # Always-on for persistent WebSocket
   processes = ['app']
 
   [http_service.concurrency]
