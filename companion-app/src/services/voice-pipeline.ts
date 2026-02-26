@@ -516,10 +516,18 @@ export class VoicePipelineService {
       );
       await this.deepgram.connect();
     } catch (error) {
-      this.callbacks.onError?.(
-        error instanceof Error ? error : new Error(String(error)),
-      );
-      this.setState('error');
+      if (!this.config.deepgramApiKey) {
+        // No API key configured — voice is unavailable, not an error
+        console.warn('[VoicePipeline] Voice unavailable: Deepgram API key not configured');
+        this.setState('disabled');
+        setTimeout(() => this.setState('idle'), 2000);
+      } else {
+        this.callbacks.onError?.(
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        this.setState('error');
+        setTimeout(() => this.setState('idle'), 3000);
+      }
       return;
     }
 
