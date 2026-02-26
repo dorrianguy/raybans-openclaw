@@ -455,6 +455,83 @@ export class CompanionWebSocketHandler extends EventEmitter<CompanionWSEvents> {
         this.log(`Voice command routed to agent: ${agent.id}`);
       }
     }
+
+    // For unknown intents (general questions), call Claude AI
+    if (command.intent === 'unknown' && msg.text.trim()) {
+      this.callClaudeAi(clientId, msg.text).catch((err) => {
+        this.emit('error', `Claude AI error: ${err instanceof Error ? err.message : String(err)}`);
+      });
+    }
+  }
+
+  private async callClaudeAi(clientId: string, text: string): Promise<void> {
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    if (!apiKey) {
+      this.sendToClient(clientId, {
+        type: 'agent_response',
+        response: {
+          agentId: 'claude',
+          handled: true,
+          voiceResponse: "I don't have an AI key configured yet. Set ANTHROPIC_API_KEY on the backend to enable AI responses.",
+          priority: 1,
+          confidence: 1,
+          processingTimeMs: 0,
+        },
+      });
+      return;
+    }
+
+    const startMs = Date.now();
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 256,
+          system: 'You are an AI assistant built into smart glasses. Respond concisely in 1-2 sentences — your response will be spoken aloud.',
+          messages: [{ role: 'user', content: text }],
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`Anthropic API ${res.status}`);
+      }
+
+      const body = await res.json() as {
+        content: Array<{ type: string; text: string }>;
+      };
+      const responseText = body.content.find((c) => c.type === 'text')?.text ?? '';
+
+      this.sendToClient(clientId, {
+        type: 'agent_response',
+        response: {
+          agentId: 'claude',
+          handled: true,
+          voiceResponse: responseText,
+          priority: 1,
+          confidence: 0.9,
+          processingTimeMs: Date.now() - startMs,
+        },
+      });
+    } catch (err) {
+      this.sendToClient(clientId, {
+        type: 'agent_response',
+        response: {
+          agentId: 'claude',
+          handled: false,
+          voiceResponse: 'Sorry, I had trouble connecting to the AI service.',
+          priority: 1,
+          confidence: 0,
+          processingTimeMs: Date.now() - startMs,
+        },
+      });
+      throw err;
+    }
   }
 
   private handleGesture(clientId: string, msg: WSGestureMessage): void {

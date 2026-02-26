@@ -18,6 +18,7 @@
 import * as path from 'path';
 import { PersistenceLayer } from './storage/persistence.js';
 import { DashboardApiServer } from './dashboard/api-server.js';
+import { VoiceCommandRouter } from './voice/voice-command-router.js';
 import {
   StructuredLogger,
   RateLimiter,
@@ -97,8 +98,13 @@ async function main(): Promise<void> {
   try {
     await apiServer.start();
 
-    // Start WebSocket keepalive for cloud load balancer compatibility
+    // Wire voice command router
     const companionWs = apiServer.getCompanionWs();
+    const voiceRouter = new VoiceCommandRouter();
+    companionWs.setVoiceRouter(voiceRouter);
+    logger.info('Voice command router initialized');
+
+    // Start WebSocket keepalive for cloud load balancer compatibility
     const keepaliveInterval = startWsKeepalive(companionWs, logger, 25_000);
 
     // Set up graceful shutdown
