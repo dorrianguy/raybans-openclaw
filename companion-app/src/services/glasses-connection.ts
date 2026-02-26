@@ -11,6 +11,7 @@
  * the native module bridge will be filled in when we have the actual SDK.
  */
 
+import { Audio } from 'expo-av';
 import {
   BLE_SCAN_TIMEOUT_MS,
   BLE_RECONNECT_DELAY_MS,
@@ -344,6 +345,7 @@ export class MockGlassesProvider implements IGlassesProvider {
   private isConnected = false;
   private frameInterval: ReturnType<typeof setInterval> | null = null;
   private audioInterval: ReturnType<typeof setInterval> | null = null;
+  private isRecordingMic = false;
   private statusInterval: ReturnType<typeof setInterval> | null = null;
   private gestureInterval: ReturnType<typeof setInterval> | null = null;
   private connectedDevice: GlassesDevice | null = null;
@@ -500,22 +502,97 @@ export class MockGlassesProvider implements IGlassesProvider {
   async startAudioInput(): Promise<void> {
     if (!this.isConnected) throw new Error('Not connected');
 
-    // Simulate audio chunks coming from microphone
-    this.audioInterval = setInterval(() => {
-      const chunk: AudioChunk = {
-        data: '', // Empty audio data in mock
-        sampleRate: 16000,
-        channels: 1,
-        durationMs: 100,
-      };
-      this.callbacks.onAudioChunk?.(chunk);
-    }, 100);
+    // Request microphone permission
+    const { status } = await Audio.requestPermissionsAsync();
+    if (status !== 'granted') {
+      // Fall back to silent mock if mic permission denied
+      this.audioInterval = setInterval(() => {
+        this.callbacks.onAudioChunk?.({ data: '', sampleRate: 16000, channels: 1, durationMs: 100 });
+      }, 100);
+      return;
+    }
+
+    // Configure iOS audio session for recording
+    await Audio.setAudioModeAsync({
+      allowsRecordingIOS: true,
+      playsInSilentModeIOS: true,
+    });
+
+    this.isRecordingMic = true;
+    this.runMicLoop();
+  }
+
+  private async runMicLoop(): Promise<void> {
+    while (this.isRecordingMic) {
+      try {
+        const recording = new Audio.Recording();
+        await recording.prepareToRecordAsync({
+          ios: {
+            extension: '.wav',
+            outputFormat: Audio.IOSOutputFormat.LINEARPCM,
+            audioQuality: Audio.IOSAudioQuality.MEDIUM,
+            sampleRate: 16000,
+            numberOfChannels: 1,
+            bitRate: 256000,
+            linearPCMBitDepth: 16,
+            linearPCMIsBigEndian: false,
+            linearPCMIsFloat: false,
+          },
+          android: {
+            extension: '.wav',
+            outputFormat: Audio.AndroidOutputFormat.DEFAULT,
+            audioEncoder: Audio.AndroidAudioEncoder.DEFAULT,
+            sampleRate: 16000,
+            numberOfChannels: 1,
+            bitRate: 128000,
+          },
+          web: {},
+        });
+
+        await recording.startAsync();
+        await new Promise<void>((r) => setTimeout(r, 250));
+        await recording.stopAndUnloadAsync();
+
+        if (!this.isRecordingMic) break;
+
+        const uri = recording.getURI();
+        if (uri) {
+          const response = await fetch(uri);
+          const buffer = await response.arrayBuffer();
+          const bytes = new Uint8Array(buffer);
+
+          // Strip 44-byte WAV header → raw PCM16
+          const pcm = bytes.slice(44);
+          if (pcm.length > 0) {
+            let binary = '';
+            for (let i = 0; i < pcm.length; i += 1024) {
+              binary += String.fromCharCode(...pcm.subarray(i, Math.min(i + 1024, pcm.length)));
+            }
+            this.callbacks.onAudioChunk?.({
+              data: btoa(binary),
+              sampleRate: 16000,
+              channels: 1,
+              durationMs: 250,
+            });
+          }
+        }
+      } catch (err) {
+        console.warn('[MockGlasses] Mic chunk error:', err);
+        await new Promise<void>((r) => setTimeout(r, 250));
+      }
+    }
   }
 
   async stopAudioInput(): Promise<void> {
+    this.isRecordingMic = false;
     if (this.audioInterval) {
       clearInterval(this.audioInterval);
       this.audioInterval = null;
+    }
+    try {
+      await Audio.setAudioModeAsync({ allowsRecordingIOS: false });
+    } catch {
+      // Ignore
     }
   }
 
