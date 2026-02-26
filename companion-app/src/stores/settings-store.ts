@@ -126,7 +126,7 @@ const defaultState: SettingsState = {
   adaptiveQuality: true,
   wakeWord: DEFAULT_WAKE_WORD,
   wakeWordEnabled: true,
-  deepgramApiKey: '',
+  deepgramApiKey: '8447c4e3ab42ba417fd79d7f1eed9ef053ee21e5',
   voiceLanguage: 'en-US',
   ttsProvider: 'cartesia',
   cartesiaApiKey: '',
@@ -145,7 +145,11 @@ function loadPersistedState(): Partial<SettingsState> {
   try {
     const json = storage.getString(STORAGE_KEYS.SETTINGS);
     if (json) {
-      return JSON.parse(json);
+      const persisted = JSON.parse(json) as Partial<SettingsState>;
+      // Migration: if API keys are empty in storage, let the default fill them in
+      if (!persisted.deepgramApiKey) delete persisted.deepgramApiKey;
+      if (!persisted.cartesiaApiKey) delete persisted.cartesiaApiKey;
+      return persisted;
     }
   } catch {
     console.warn('[Settings] Failed to load persisted settings');
