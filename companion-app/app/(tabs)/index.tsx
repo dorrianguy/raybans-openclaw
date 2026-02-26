@@ -17,6 +17,7 @@ import {
   Pressable,
   RefreshControl,
   SafeAreaView,
+  TextInput,
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
@@ -34,6 +35,7 @@ export default function HomeScreen() {
   const agents = useAgents();
   const [refreshing, setRefreshing] = useState(false);
   const [lastFrameData, setLastFrameData] = useState<string | null>(null);
+  const [textCommand, setTextCommand] = useState('');
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -127,6 +129,35 @@ export default function HomeScreen() {
           {voice.interimTranscript ? (
             <Text style={styles.transcript}>"{voice.interimTranscript}"</Text>
           ) : null}
+
+          {/* Text command fallback */}
+          <View style={styles.textCommandRow}>
+            <TextInput
+              style={styles.textCommandInput}
+              placeholder="Type a command..."
+              placeholderTextColor={COLORS.textMuted}
+              value={textCommand}
+              onChangeText={setTextCommand}
+              onSubmitEditing={() => {
+                if (textCommand.trim()) {
+                  agents.sendVoiceCommand(textCommand.trim());
+                  setTextCommand('');
+                }
+              }}
+              returnKeyType="send"
+            />
+            <Pressable
+              style={styles.textCommandSend}
+              onPress={() => {
+                if (textCommand.trim()) {
+                  agents.sendVoiceCommand(textCommand.trim());
+                  setTextCommand('');
+                }
+              }}
+            >
+              <Ionicons name="send" size={16} color={COLORS.primary} />
+            </Pressable>
+          </View>
         </View>
 
         {/* Current Mode */}
@@ -249,6 +280,29 @@ const styles = StyleSheet.create({
     color: COLORS.accent,
     fontStyle: 'italic',
     marginTop: 8,
+  },
+  textCommandRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+    gap: 8,
+  },
+  textCommandInput: {
+    flex: 1,
+    height: 36,
+    borderRadius: 8,
+    backgroundColor: COLORS.background,
+    paddingHorizontal: 10,
+    fontSize: 13,
+    color: COLORS.text,
+  },
+  textCommandSend: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    backgroundColor: COLORS.primary + '20',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   modeIndicator: {
     flexDirection: 'row',
