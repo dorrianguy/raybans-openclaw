@@ -4,6 +4,225 @@ _Updated by Night Shift agent + daytime development._
 
 ---
 
+## 2026-02-26 — Night Shift #15 (Billing Engine + Store Layout Mapper + Landing Page Data)
+
+### What Was Built
+
+#### 1. Billing Engine (`src/billing/billing-engine.ts`)
+- **Revenue infrastructure** — Stripe-powered subscription management for the entire platform
+- **5 Plan Definitions:** Free, Solo Store ($79/mo), Multi-Store ($199/mo), Enterprise ($499/mo), Pay Per Count ($0.02/item)
+  - Each plan has detailed entitlements: max stores, SKUs, sessions, team members, agent features
+  - Yearly billing with 17% savings
+  - Trial periods: 14 days (Solo/Multi), 30 days (Enterprise)
+- **Customer Management:**
+  - Create, update, delete customers
+  - Lookup by ID, email, or Stripe customer ID
+  - Search and filter with pagination
+  - Metadata tracking
+- **Subscription Lifecycle:**
+  - Start, upgrade, downgrade, cancel, reactivate, pause, resume
+  - Cancel at period end vs. immediate
+  - Trial management with automatic expiration
+  - Proration configuration
+- **Entitlement System:**
+  - Boolean feature checks (exportCsv, posIntegration, apiAccess, etc.)
+  - Agent feature gating (agent:inventory, agent:networking, etc.)
+  - Numeric limit checks with approaching/exceeded events
+  - Store, SKU, session, and team member limits
+- **Usage-Based Billing:**
+  - Per-item counting for pay-per-count plan
+  - Minimum session charges ($200)
+  - Usage summary with cost estimation
+  - Report tracking for Stripe metered billing
+- **Invoice Management:**
+  - Create, pay, fail invoices
+  - Customer invoice history
+  - Period tracking
+- **Webhook Processing:**
+  - 12 Stripe event types handled
+  - subscription.created/updated/deleted
+  - invoice.paid/payment_failed
+  - trial_will_end notifications
+  - Auto-restore from past_due on successful payment
+  - Event retention with auto-trim
+- **Revenue Metrics:**
+  - MRR (Monthly Recurring Revenue) calculation
+  - ARR (Annual Recurring Revenue)
+  - Total revenue from paid invoices
+  - Churn rate calculation
+  - ARPU (Average Revenue Per User)
+- **Plan Comparison:** Gains/losses between plans, price diff, upgrade/downgrade detection
+- **Pricing Display:** Frontend-ready data with highlights, CTAs, popularity badges, savings
+- **Checkout & Portal:** Session URL generation (Stripe-ready)
+- **100 tests**
+
+#### 2. Store Layout Mapper (`src/inventory/store-layout.ts`)
+- **Spatial tracking** — Maps your store as you walk through it
+- **Zone Hierarchy:** Zones with parent-child relationships (department → aisle → section)
+  - 12 zone types: entrance, checkout, department, aisle, endcap, display, backroom, cold_storage, loading_dock, office, restroom, custom
+  - Configurable max zones (200) and sections per zone (50)
+- **Zone Lifecycle:**
+  - Enter/exit tracking with time spent
+  - Coverage status: not_visited → partial → complete (or needs_recount)
+  - Auto-complete when all sections counted
+  - First/last visited timestamps
+- **Section Management:**
+  - Sections within zones (shelf levels, positions)
+  - Item counting per section with image tracking
+  - Depth estimation (rows deep)
+- **Walk Path Tracking:**
+  - GPS waypoint recording with configurable sample rate
+  - Direction estimation (north/south/east/west) from movement
+  - Speed estimation from GPS changes
+  - Zone association per waypoint
+  - Voice annotations at waypoints
+  - Distance and time calculation (haversine formula)
+- **GPS Zone Auto-Detection:**
+  - Define zone boundaries with GPS polygons
+  - Point-in-polygon detection auto-enters zones
+  - Layout bounds auto-calculated from walk path
+- **Coverage Analytics:**
+  - Per-zone and overall coverage percentage
+  - Partial coverage = 50%, complete = 100%
+  - Coverage events and notifications
+  - Uncovered zone listing
+- **Route Optimization:**
+  - Suggests optimal path through uncovered zones
+  - Prioritizes recount zones
+  - Time and item estimates
+- **Heat Maps:**
+  - Item density per zone
+  - Time spent visualization
+  - Intensity scoring (0-1) for frontend rendering
+- **Layout Comparison:**
+  - Compare this visit vs. last visit
+  - New/removed/changed zones
+  - Item count diff, coverage diff, time diff
+- **Store Templates:**
+  - Convenience store (12 zones)
+  - Grocery (17 zones)
+  - Hardware (12 zones)
+  - Clothing (10 zones)
+  - Warehouse (8 zones)
+- **Voice Summary:** TTS-friendly progress report
+- **82 tests**
+
+#### 3. Landing Page Data Engine (`src/marketing/landing-page-data.ts`)
+- **Marketing-ready content** — complete landing page data structure
+- **SEO Metadata:** Title, description, 15 keywords, Open Graph, Twitter Card, JSON-LD structured data with AggregateOffer
+- **Hero Section:** Headline, subheadline, description, 4 stats (90% less labor, 3hrs, 10x cheaper, 95% accuracy), primary/secondary CTAs
+- **Feature Showcase:** 10 features with icons, descriptions, benefits, premium badges
+  - Auto-capture, product ID, smart counting, voice UX, dashboard, export, shrinkage, security, layout, multi-agent
+- **How It Works:** 3 steps with duration hints (5 min → 2-4 hours → instant)
+- **Pricing Section:** 5 plans with monthly/yearly toggle, features list, trial badges, popular marker
+- **Competitor Comparison:** 12 features compared against Manual, RGIS, and Zebra SmartCount
+  - Cost, hardware, time, accuracy, people, photo evidence, real-time, voice, AI, hands-free, shrinkage, monthly capability
+- **Testimonials:** 4 realistic testimonials with success metrics (85% time reduction, $4,200 saved, 3 stores in 1 day, 10x cost reduction)
+- **ROI Calculator:** 6 inputs (stores, SKUs, counts/year, team size, hourly rate, days per count) with working formula
+  - `calculateROI()` function: current cost, new cost, savings, hours recovered, ROI multiple, payback period
+- **FAQ Section:** 12 questions covering hardware, accuracy, security, integrations, offline mode, multi-person, pricing
+- **CTA Section:** Guarantees (no credit card, free trial, cancel anytime, export data)
+- **Footer:** Categorized links (Product, Support, Company, Legal), social links, Meta trademark disclaimer
+- **59 tests**
+
+#### 4. Revenue Brainstorming — 6 New Ideas
+- **#53 Livestock Health Monitor** — "Rancher's AI Eye" ($99-1,999/mo, $80B cattle + $45B dairy). Individual animal health detection, gait analysis, herd management. Expands to horses, poultry, swine.
+- **#54 Crime Scene / Evidence Documenter** — "CSI in Glasses" ($299-2,499/mo, $18B law enforcement tech). Hands-free evidence cataloging, spatial measurement, chain-of-custody auto-logging, court-admissible reports.
+- **#55 Utility Line Inspector** — "Walk the Line Smarter" ($199-4,999/mo, $10B inspection + $100B infrastructure). Power line sag, vegetation clearance, pole condition, pipeline leak indicators. One prevented wildfire = priceless.
+- **#56 Fashion Stylist AI** — "Your Personal Shopper" ($9.99-499/mo, $350B fashion retail). Wardrobe matching, outfit suggestions, trend analysis. Affiliate revenue could exceed subscription revenue.
+- **#57 Classroom Teaching Assistant** — "Every Student, Every Moment" ($19.99-999/mo, $800B education). Student engagement monitoring, auto-attendance, fact support, IEP compliance documentation.
+- **#58 Landscaping / Lawn Care Estimator** — "Quote While You Walk" ($39-299/mo, $130B landscaping). Property measurement, tree ID, garden bed sizing, auto-generated professional quotes.
+
+### Stats
+- **6 files** (3 modules + 3 test suites) + updated index + revenue doc + progress
+- **~10,849 lines of code** added
+- **1,249 total tests** (241 new this session, all passing)
+- **6 new revenue ideas** documented with full specs
+- **58 total revenue ideas** in REVENUE-FEATURES.md
+
+### Architecture After Tonight
+```
+src/
+├── types.ts                              # 30+ shared interfaces & types
+├── index.ts                              # Public API (updated with 3 new modules)
+├── vision/
+│   └── vision-pipeline.ts                # Image → structured analysis
+├── inventory/
+│   ├── inventory-state.ts                # Running inventory state
+│   ├── inventory-state.test.ts           # 42 tests
+│   ├── product-database.ts              # UPC lookup + caching
+│   ├── product-database.test.ts         # 24 tests
+│   ├── export-service.ts                # CSV/JSON/report generation
+│   ├── export-service.test.ts           # 28 tests
+│   ├── store-layout.ts                  # ← NEW: Store layout mapping
+│   └── store-layout.test.ts             # 82 tests
+├── voice/
+│   ├── voice-command-router.ts          # Voice command parsing
+│   └── voice-command-router.test.ts     # 50 tests
+├── bridge/
+│   ├── node-bridge.ts                   # OpenClaw node integration
+│   ├── node-bridge.test.ts              # 21 tests
+│   ├── image-scheduler.ts              # Smart auto-capture
+│   └── image-scheduler.test.ts          # 19 tests
+├── storage/
+│   ├── persistence.ts                   # SQLite persistence layer
+│   └── persistence.test.ts              # 38 tests
+├── routing/
+│   ├── context-router.ts               # Intelligent image routing
+│   └── context-router.test.ts           # 27 tests
+├── chains/
+│   ├── context-chain-engine.ts          # Multi-agent workflow orchestration
+│   └── context-chain-engine.test.ts     # 75 tests
+├── notifications/
+│   ├── notification-engine.ts           # Smart notification routing
+│   └── notification-engine.test.ts      # 67 tests
+├── analytics/
+│   ├── analytics-engine.ts              # Usage tracking + performance metrics
+│   └── analytics-engine.test.ts         # 43 tests
+├── billing/                              # ← NEW
+│   ├── billing-engine.ts                # Stripe subscription management
+│   └── billing-engine.test.ts           # 100 tests
+├── marketing/                            # ← NEW
+│   ├── landing-page-data.ts             # Landing page content + ROI calculator
+│   └── landing-page-data.test.ts        # 59 tests
+├── agents/
+│   ├── inventory-agent.ts               # Inventory orchestrator
+│   ├── memory-agent.ts                  # Perfect Memory
+│   ├── memory-agent.test.ts             # 24 tests
+│   ├── networking-agent.ts              # Badge/card scanner
+│   ├── networking-agent.test.ts         # 30 tests
+│   ├── deal-agent.ts                    # Price intelligence
+│   ├── deal-agent.test.ts              # 50 tests
+│   ├── security-agent.ts               # Threat detection
+│   ├── security-agent.test.ts           # 69 tests
+│   ├── meeting-agent.ts                # Meeting intelligence
+│   ├── meeting-agent.test.ts            # 70 tests
+│   ├── inspection-agent.ts             # Walkthrough reports
+│   ├── inspection-agent.test.ts         # 67 tests
+│   ├── translation-agent.ts            # Multilingual OCR + cultural
+│   ├── translation-agent.test.ts        # 94 tests
+│   ├── debug-agent.ts                  # Code/error analysis
+│   ├── debug-agent.test.ts             # 92 tests
+│   ├── context-agent.ts                # Context-aware assistant
+│   └── context-agent.test.ts            # 64 tests
+├── integration/
+│   └── e2e-flow.test.ts                # 14 end-to-end tests
+└── dashboard/
+    ├── api-server.ts                    # REST API + SSE for dashboard
+    ├── companion-ws.ts                  # WebSocket for companion app
+    └── production.ts                    # Production server entry
+```
+
+### What's Next (Priority)
+1. **Web Dashboard UI** — React frontend for live inventory + billing portal
+2. **Stripe Integration** — Connect BillingEngine to real Stripe API
+3. **Landing Page** — Build React site from landing-page-data.ts
+4. **Store Layout Voice Commands** — Wire layout mapper to voice command router
+5. **iOS Companion App** — Dorrian is working on this
+6. **Real hardware testing** — Test with actual Ray-Bans + OpenClaw node
+
+---
+
 ## 2026-02-25 — Night Shift #14 (Context Chain Engine + Notification Engine + Analytics Engine)
 
 ### What Was Built
@@ -902,6 +1121,12 @@ src/
 | Translation Agent | 🟢 | 20+ languages, 10 countries, menus/signs/docs, cultural briefings |
 | Debug Agent | 🟢 | 17 languages, error parsing, fix suggestions, security warnings |
 | Context-Aware Assistant | 🟢 | 9 contexts, nutrition alerts, bolt specs, task tracking |
+| Context Chain Engine | 🟢 | 5 built-in chains, triggers, dependency graphs |
+| Notification Engine | 🟢 | Priority routing, TTS rate limiting, batching |
+| Analytics Engine | 🟢 | Agent metrics, session tracking, value metrics |
+| Billing Engine | 🟢 | 5 plans, subscriptions, usage, webhooks, MRR/ARR |
+| Store Layout Mapping | 🟢 | Zones, sections, walk paths, GPS detection, templates |
+| Landing Page Data | 🟢 | SEO, features, pricing, comparison, FAQ, ROI calc |
 | Dashboard UI | 🔴 | React frontend planned |
-| Context Chain Engine | 🔴 | Multi-agent workflow orchestration |
-| Store Layout Mapping | 🔴 | Aisle tracking + GPS |
+| Stripe Live Integration | 🔴 | BillingEngine is ready, needs real Stripe keys |
+| Landing Page Build | 🔴 | Data engine built, needs React frontend |
