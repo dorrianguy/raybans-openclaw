@@ -4,6 +4,28 @@ _Updated by Night Shift agent + daytime development._
 
 ---
 
+## 2026-02-27 — Night Shift #16 (Plugin Registry + Setup Wizard + Dashboard Widgets)
+
+### What Was Built
+1. **Plugin Registry** (`src/plugins/plugin-registry.ts`) — 120 tests
+   - Full plugin lifecycle, dependency resolution, capability permissions, hook system
+   - Health monitoring with auto-recovery, pricing tier gating
+   - 11 core plugin definitions for all specialist agents
+2. **Setup Wizard** (`src/onboarding/setup-wizard.ts`) — 98 tests
+   - 11-step onboarding, 9 store type presets, hardware pairing
+   - Voice-first UX, tutorial mode, quick mode for experienced users
+3. **Dashboard Widget System** (`src/dashboard/widget-system.ts`) — 69 tests
+   - 16 widget types, 5 views, 12 live inventory widgets
+   - SSE real-time, light/dark themes, pricing tier gating
+
+### Revenue Ideas (#59-64)
+- Plumber Leak Detection, Airport Navigation, Plant Doctor
+- Moving Day Inventory, Vintage Car Appraiser, Emergency First Responder
+
+### Stats: 287 new tests (1,536 total) | ~5,572 lines | 64 revenue ideas | PR #3
+
+---
+
 ## 2026-02-22 — Night Shift #12 (Security Agent + Meeting Intelligence + Inspection Agent)
 
 ### What Was Built
