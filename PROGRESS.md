@@ -4,6 +4,121 @@ _Updated by Night Shift agent + daytime development._
 
 ---
 
+## 2026-03-04 — Night Shift #18 (Circuit Breaker + Health Monitor + Device Sync)
+
+### What Was Built
+1. **Circuit Breaker & Error Recovery Engine** (`src/resilience/circuit-breaker.ts`) — 87 tests
+   - Full circuit breaker: closed → open → half-open lifecycle
+   - Failure rate + count-based thresholds with sliding window
+   - Call timeout protection + bulkhead pattern (max concurrent calls)
+   - Retry with exponential backoff + jitter
+   - Multi-level fallback: primary → secondary → cached → default value
+   - ResiliencePipeline: combines CB + retry + fallback in a single call
+   - ResilienceRegistry: global dashboard for all pipelines in the system
+   - 7 pre-built resilience profiles: visionApi, productLookup, webResearch, voiceService, webhookDelivery, billing, localStorage
+   - Custom error types: CircuitOpenError, BulkheadFullError, CallTimeoutError
+   - Event-driven: success, failure, state-change, rejected, fallback events
+
+2. **Health Monitor & Diagnostics Engine** (`src/health/health-monitor.ts`) — 60 tests
+   - Component health tracking: healthy → degraded → unhealthy with configurable thresholds
+   - Auto-recovery: triggered when unhealthy, retries with limits, event emission
+   - Alert system: create, acknowledge, auto-resolve on recovery, severity filtering (info/warning/critical)
+   - System-wide health aggregation: critical component weighting affects overall status
+   - Runtime diagnostics: memory usage, active timers, uptime, node version, platform
+   - Voice-friendly health summaries for TTS delivery to glasses
+   - 7 pre-built health check factories: sqlite, externalApi, nodeBridge, voiceService, agent, memory, custom
+
+3. **Multi-Device Sync Engine** (`src/sync/device-sync.ts`) — 56 tests
+   - Device registration with auto-inferred capabilities per type (glasses/phone/dashboard/companion/api)
+   - Key-value state sync across arbitrary namespaces with version tracking
+   - Vector clock-based conflict detection (causal ordering — not just timestamps)
+   - 4 conflict resolution strategies: last-write-wins, server-wins, client-wins, manual
+   - Operation buffering with configurable max size + debounced sync notifications
+   - State snapshots for initial sync / reconnection (snapshot → apply → merge)
+   - Command broadcast for cross-device coordination (e.g., "snap photo" from dashboard)
+   - Operation history with namespace/time/limit filtering
+   - Voice-friendly sync status summaries
+
+### Revenue Ideas (#71-76)
+- **Oil & Gas Field Inspector** — Wellsite compliance automation ($149-4,999/mo, $10B inspection market, single EPA fine = $37-70K/day)
+- **Yacht / Marine Surveyor** — Hull-to-helm digital survey ($99-999/mo, $500M surveying + $60B recreational boating)
+- **Art Conservator / Restorer** — See the invisible damage ($49.99-999/mo, $5B conservation + $65B art auction market)
+- **Wildfire Damage Assessor** — Walk the burn, map the loss ($99-4,999/mo, $20B+ wildfire claims, climate-driven 15-20% annual growth)
+- **Concert / Festival Stage Manager** — Every act, every cue, zero mistakes ($79-2,999/mo, $40B live entertainment, Live Nation = one deal = 200+ venues)
+- **Marine Biologist / Reef Survey** — Census every coral, count every fish ($49-4,999/mo, $5B ocean monitoring, NOAA grants)
+
+### Stats: 203 new tests (1,261 total) | ~6,044 lines | 76 revenue ideas | PR #5
+
+---
+
+## 2026-02-28 — Night Shift #17 (Voice Pipeline + Quota Engine + Webhook Engine)
+
+### What Was Built
+1. **Voice Pipeline Engine** (`src/voice/voice-pipeline.ts`) — 66 tests
+   - Full STT → Intent → Agent Routing → TTS response loop
+   - Wake word detection ("hey openclaw", "hey glasses", custom)
+   - Streaming STT with partial transcripts, silence detection, noise gate
+   - TTS queue with priority ordering and interrupt support
+   - Multi-turn conversation context (configurable history length)
+   - Mock STT/TTS adapters for testing + adapter interfaces for real providers
+   - Metrics: latency tracking, segment counts, error counts
+
+2. **API Rate Limiter & Quota Engine** (`src/ratelimit/quota-engine.ts`) — 73 tests
+   - 5 pricing tiers: free ($0), solo ($79), multi ($199), enterprise ($499), pay-per-count
+   - 10 resource types: vision_api_calls, agent_requests, tts_minutes, storage, exports, etc.
+   - Per-minute/hour/day/month/total limits with token bucket burst allowance
+   - 4 overage policies: block, warn, charge (per-unit), throttle
+   - Feature gating per tier (dashboard, POS integration, custom integrations, etc.)
+   - Usage analytics with monthly estimation, overage cost tracking
+   - Tier transitions with grace periods on downgrade
+   - Event-driven: warnings, exceeded, reset, tier change, overage charge
+
+3. **Webhook & Integration Engine** (`src/webhooks/webhook-engine.ts`) — 59 tests
+   - 23 webhook event types (inventory, inspection, security, deal, meeting, etc.)
+   - Endpoint management: create, update, delete, rotate secrets, health tracking
+   - HMAC-SHA256 signature generation and verification for payload authenticity
+   - Retry with exponential backoff + dead letter queue for persistent failures
+   - Rate limiting per endpoint (configurable per-minute)
+   - Batch delivery mode (configurable window, auto-flush)
+   - Integration-specific formatting (Slack blocks, generic JSON)
+   - 7 integration types: generic, Slack, email, Square, Shopify, Clover, Zapier
+   - Delivery analytics: success rate, latency, per-endpoint stats
+   - Health tracking: healthy → degraded → unhealthy based on consecutive failures
+
+### Revenue Ideas (#65-70)
+- **Dental Chair Documentor** — Hands-free clinical photography ($99-999/mo, $160B dental market)
+- **Gemologist/Jewelry Appraiser** — Stone & setting identification ($29.99-499/mo, $75B jewelry market)
+- **Librarian/Book Scout** — Shelf-scanning for hidden value ($19.99-149/mo, $3B used book market)
+- **Stadium Vendor AI** — Optimized concession sales ($9.99-499/mo, $30B stadium concessions)
+- **Solar Panel Inspector** — Rooftop array health assessment ($79-999/mo, $30B solar market)
+- **Customs & Border Inspector** — Cargo verification AI ($299-4,999/mo, $50B customs brokerage)
+
+### Stats: 198 new tests (1,058 total) | ~5,595 lines | 70 revenue ideas | PR #4
+
+---
+
+## 2026-02-27 — Night Shift #16 (Plugin Registry + Setup Wizard + Dashboard Widgets)
+
+### What Was Built
+1. **Plugin Registry** (`src/plugins/plugin-registry.ts`) — 120 tests
+   - Full plugin lifecycle, dependency resolution, capability permissions, hook system
+   - Health monitoring with auto-recovery, pricing tier gating
+   - 11 core plugin definitions for all specialist agents
+2. **Setup Wizard** (`src/onboarding/setup-wizard.ts`) — 98 tests
+   - 11-step onboarding, 9 store type presets, hardware pairing
+   - Voice-first UX, tutorial mode, quick mode for experienced users
+3. **Dashboard Widget System** (`src/dashboard/widget-system.ts`) — 69 tests
+   - 16 widget types, 5 views, 12 live inventory widgets
+   - SSE real-time, light/dark themes, pricing tier gating
+
+### Revenue Ideas (#59-64)
+- Plumber Leak Detection, Airport Navigation, Plant Doctor
+- Moving Day Inventory, Vintage Car Appraiser, Emergency First Responder
+
+### Stats: 287 new tests (1,536 total) | ~5,572 lines | 64 revenue ideas | PR #3
+
+---
+
 ## 2026-02-22 — Night Shift #12 (Security Agent + Meeting Intelligence + Inspection Agent)
 
 ### What Was Built
@@ -549,13 +664,22 @@ src/
 | Networking Agent | 🟢 | Badge/card OCR, research, briefings, dedup |
 | Deal Analysis Agent | 🟢 | Products/vehicles/real estate, verdicts, negotiation |
 | Integration Tests | 🟢 | 14 E2E flow tests with mock vision |
-| Unit Tests | 🟢 | 573 tests, all passing |
+| Unit Tests | 🟢 | 1,261 tests, all passing |
 | Security Agent | 🟢 | QR decode, URL analysis, document risk, phishing detection, sensitive data, physical security |
 | Meeting Intel Agent | 🟢 | Transcript, action items, decisions, visual capture, summaries |
 | Inspection Agent | 🟢 | 6 types, 33+ auto-patterns, professional reports |
+| Voice Pipeline | 🟢 | STT → Intent → Agent → TTS, wake words, conversation context, priority interrupts |
+| Quota Engine | 🟢 | 5 tiers, 10 resources, token bucket, overage policies, feature gating |
+| Webhook Engine | 🟢 | 23 event types, HMAC signatures, retries, DLQ, batch mode, Slack/generic |
+| Plugin Registry | 🟢 | Lifecycle, dependencies, capabilities, health, pricing gates |
+| Setup Wizard | 🟢 | 11 steps, 9 store presets, voice-first UX |
+| Dashboard Widgets | 🟢 | 16 types, 5 views, SSE real-time, theming |
 | Dashboard UI | 🔴 | React frontend planned |
-| Context Chain Engine | 🔴 | Multi-agent workflow orchestration |
-| Store Layout Mapping | 🔴 | Aisle tracking + GPS |
-| Translation Agent | 🔴 | Multilingual OCR + cultural context |
-| Debug Agent | 🔴 | Code/error analysis via vision |
-| Context-Aware Assistant | 🔴 | Contextual help (kitchen, gym, etc.) |
+| Context Chain Engine | 🟡 | Built in branch 2026-02-25 (not merged to current) |
+| Store Layout Mapping | 🟡 | Built in branch 2026-02-26 (not merged to current) |
+| Translation Agent | 🟡 | Built in branch 2026-02-24 (not merged to current) |
+| Debug Agent | 🟡 | Built in branch 2026-02-24 (not merged to current) |
+| Context-Aware Assistant | 🟡 | Built in branch 2026-02-24 (not merged to current) |
+| Circuit Breaker Engine | 🟢 | Full CB + retry + fallback + registry + 7 profiles |
+| Health Monitor | 🟢 | Component health, alerts, recovery, diagnostics, voice summary |
+| Device Sync Engine | 🟢 | Multi-device sync, vector clocks, conflict resolution, snapshots |
