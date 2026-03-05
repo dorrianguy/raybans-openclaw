@@ -4,6 +4,53 @@ _Updated by Night Shift agent + daytime development._
 
 ---
 
+## 2026-03-04 — Night Shift #18 (Circuit Breaker + Health Monitor + Device Sync)
+
+### What Was Built
+1. **Circuit Breaker & Error Recovery Engine** (`src/resilience/circuit-breaker.ts`) — 87 tests
+   - Full circuit breaker: closed → open → half-open lifecycle
+   - Failure rate + count-based thresholds with sliding window
+   - Call timeout protection + bulkhead pattern (max concurrent calls)
+   - Retry with exponential backoff + jitter
+   - Multi-level fallback: primary → secondary → cached → default value
+   - ResiliencePipeline: combines CB + retry + fallback in a single call
+   - ResilienceRegistry: global dashboard for all pipelines in the system
+   - 7 pre-built resilience profiles: visionApi, productLookup, webResearch, voiceService, webhookDelivery, billing, localStorage
+   - Custom error types: CircuitOpenError, BulkheadFullError, CallTimeoutError
+   - Event-driven: success, failure, state-change, rejected, fallback events
+
+2. **Health Monitor & Diagnostics Engine** (`src/health/health-monitor.ts`) — 60 tests
+   - Component health tracking: healthy → degraded → unhealthy with configurable thresholds
+   - Auto-recovery: triggered when unhealthy, retries with limits, event emission
+   - Alert system: create, acknowledge, auto-resolve on recovery, severity filtering (info/warning/critical)
+   - System-wide health aggregation: critical component weighting affects overall status
+   - Runtime diagnostics: memory usage, active timers, uptime, node version, platform
+   - Voice-friendly health summaries for TTS delivery to glasses
+   - 7 pre-built health check factories: sqlite, externalApi, nodeBridge, voiceService, agent, memory, custom
+
+3. **Multi-Device Sync Engine** (`src/sync/device-sync.ts`) — 56 tests
+   - Device registration with auto-inferred capabilities per type (glasses/phone/dashboard/companion/api)
+   - Key-value state sync across arbitrary namespaces with version tracking
+   - Vector clock-based conflict detection (causal ordering — not just timestamps)
+   - 4 conflict resolution strategies: last-write-wins, server-wins, client-wins, manual
+   - Operation buffering with configurable max size + debounced sync notifications
+   - State snapshots for initial sync / reconnection (snapshot → apply → merge)
+   - Command broadcast for cross-device coordination (e.g., "snap photo" from dashboard)
+   - Operation history with namespace/time/limit filtering
+   - Voice-friendly sync status summaries
+
+### Revenue Ideas (#71-76)
+- **Oil & Gas Field Inspector** — Wellsite compliance automation ($149-4,999/mo, $10B inspection market, single EPA fine = $37-70K/day)
+- **Yacht / Marine Surveyor** — Hull-to-helm digital survey ($99-999/mo, $500M surveying + $60B recreational boating)
+- **Art Conservator / Restorer** — See the invisible damage ($49.99-999/mo, $5B conservation + $65B art auction market)
+- **Wildfire Damage Assessor** — Walk the burn, map the loss ($99-4,999/mo, $20B+ wildfire claims, climate-driven 15-20% annual growth)
+- **Concert / Festival Stage Manager** — Every act, every cue, zero mistakes ($79-2,999/mo, $40B live entertainment, Live Nation = one deal = 200+ venues)
+- **Marine Biologist / Reef Survey** — Census every coral, count every fish ($49-4,999/mo, $5B ocean monitoring, NOAA grants)
+
+### Stats: 203 new tests (1,261 total) | ~6,044 lines | 76 revenue ideas | PR #5
+
+---
+
 ## 2026-02-28 — Night Shift #17 (Voice Pipeline + Quota Engine + Webhook Engine)
 
 ### What Was Built
@@ -617,7 +664,7 @@ src/
 | Networking Agent | 🟢 | Badge/card OCR, research, briefings, dedup |
 | Deal Analysis Agent | 🟢 | Products/vehicles/real estate, verdicts, negotiation |
 | Integration Tests | 🟢 | 14 E2E flow tests with mock vision |
-| Unit Tests | 🟢 | 1,058 tests, all passing |
+| Unit Tests | 🟢 | 1,261 tests, all passing |
 | Security Agent | 🟢 | QR decode, URL analysis, document risk, phishing detection, sensitive data, physical security |
 | Meeting Intel Agent | 🟢 | Transcript, action items, decisions, visual capture, summaries |
 | Inspection Agent | 🟢 | 6 types, 33+ auto-patterns, professional reports |
@@ -633,3 +680,6 @@ src/
 | Translation Agent | 🟡 | Built in branch 2026-02-24 (not merged to current) |
 | Debug Agent | 🟡 | Built in branch 2026-02-24 (not merged to current) |
 | Context-Aware Assistant | 🟡 | Built in branch 2026-02-24 (not merged to current) |
+| Circuit Breaker Engine | 🟢 | Full CB + retry + fallback + registry + 7 profiles |
+| Health Monitor | 🟢 | Component health, alerts, recovery, diagnostics, voice summary |
+| Device Sync Engine | 🟢 | Multi-device sync, vector clocks, conflict resolution, snapshots |
