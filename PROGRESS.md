@@ -4,6 +4,62 @@ _Updated by Night Shift agent + daytime development._
 
 ---
 
+## 2026-03-06 — Night Shift #19 (Stripe Billing + Offline Queue + Telemetry)
+
+### What Was Built
+1. **Stripe Billing Integration** (`src/billing/stripe-integration.ts`) — 80 tests
+   - Full Stripe subscription lifecycle: create customer, checkout, billing portal
+   - 5 pricing plans: free / solo ($79) / multi ($199) / enterprise ($499) / pay-per-count
+   - Webhook processing: subscription.created/updated/deleted, checkout.session.completed, invoice.paid, invoice.payment_failed, customer.subscription.trial_will_end
+   - Dunning & failed payments: progressive failure tracking, past_due → unpaid status machine
+   - Plan changes: upgrades, downgrades (cancel + new), billing interval changes
+   - Usage-based billing: record/query/mark-billed with meter-based tracking
+   - Entitlements & feature gating per plan (agents, stores, custom commands, etc.)
+   - Revenue metrics: MRR, ARR, churn rate, ARPU, LTV, plan breakdown, trial count
+   - Payment method sync with last4/brand tracking
+   - Voice billing summaries for TTS delivery
+   - Cancellation with reactivation support (period-end or immediate)
+   - Grace period handling for past-due accounts
+
+2. **Offline Queue & Sync Engine** (`src/offline/offline-queue.ts`) — 58 tests
+   - Priority-based operation queue (critical > high > normal > low)
+   - Connectivity state machine: online / offline / degraded
+   - Batch drain processing with configurable batch size and delay
+   - Exponential backoff retry with max attempts
+   - Dependency tracking: operation B waits for operation A
+   - TTL expiration: stale operations auto-expire
+   - Conflict detection: stale_data, version_mismatch, server_rejected, dependency_failed
+   - Queue capacity management: max ops + byte-aware eviction of lowest priority
+   - Serialization: export/import queue state for persistence
+   - Connectivity monitoring with configurable check intervals
+   - Comprehensive metrics: depth, throughput, drain rate, offline duration
+   - Voice status summaries
+
+3. **Telemetry & Observability Engine** (`src/telemetry/telemetry-engine.ts`) — 65 tests
+   - Structured event logging with severity levels (debug → fatal)
+   - Performance timing spans with hierarchical parent/child tracing
+   - Counter, gauge, and histogram metric types with tagged filtering
+   - Session-level analytics: snaps, products, barcodes, voice commands, exports
+   - Error tracking with frequency counting and top-error detection
+   - Configurable sinks with periodic flush and retry on failure
+   - Sampling for high-volume events (reduce noise on debug/info)
+   - Ring buffer with configurable max size
+   - Privacy-safe: redacts Stripe keys, email addresses, file paths, Buffer contents
+   - Smart field-name redaction: blocks imageData but allows imageId
+   - Voice-friendly telemetry summaries (uptime, errors, success rate)
+   - Full diagnostic export (logs, spans, metrics, session)
+
+### Bug Fixes
+- Fixed byte capacity eviction in offline queue (was using operation size instead of overflow amount)
+- Fixed `trackVisionProcessing` double-counting `totalSnaps` in telemetry
+- Fixed `sanitizeData` blocking harmless identifier fields like `imageId`
+- Fixed Stripe key regex not matching `sk-live-*` / `sk-test-*` format
+- Fixed offline queue tests racing with auto-drain on enqueue
+
+### Stats: 203 new tests (1,464 total) | ~5,218 lines | PR pending (no remote)
+
+---
+
 ## 2026-03-04 — Night Shift #18 (Circuit Breaker + Health Monitor + Device Sync)
 
 ### What Was Built
