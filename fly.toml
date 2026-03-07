@@ -1,0 +1,43 @@
+# fly.toml — Fly.io deployment configuration
+# Replace 'raybans-backend' with your actual app name after `fly launch`
+
+app = 'raybans-backend'
+primary_region = 'dfw'  # Dallas — closest to CST
+
+[build]
+  dockerfile = 'Dockerfile'
+
+[env]
+  NODE_ENV = 'production'
+  PORT = '3847'
+  DATA_DIR = '/app/data'
+
+[http_service]
+  internal_port = 3847
+  force_https = true
+  auto_stop_machines = 'stop'    # Scale to zero when idle (saves $$$)
+  auto_start_machines = true     # Wake on incoming request
+  min_machines_running = 0       # Allow full scale-to-zero
+  processes = ['app']
+
+  [http_service.concurrency]
+    type = 'connections'
+    hard_limit = 100
+    soft_limit = 80
+
+[[http_service.checks]]
+  grace_period = '10s'
+  interval = '30s'
+  method = 'GET'
+  timeout = '5s'
+  path = '/api/health'
+
+# Persistent volume for SQLite data
+[mounts]
+  source = 'raybans_data'
+  destination = '/app/data'
+
+[[vm]]
+  memory = '512mb'
+  cpu_kind = 'shared'
+  cpus = 1

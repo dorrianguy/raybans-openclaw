@@ -143,3 +143,82 @@ export type {
 // Dashboard API
 export { DashboardApiServer } from './dashboard/api-server.js';
 export type { DashboardApiConfig, DashboardApiEvents } from './dashboard/api-server.js';
+
+// Companion WebSocket
+export { CompanionWebSocketHandler } from './dashboard/companion-ws.js';
+export type { CompanionWSConfig, CompanionWSEvents } from './dashboard/companion-ws.js';
+
+// Translation Agent
+export { TranslationAgent } from './agents/translation-agent.js';
+
+// Debug Agent
+export { DebugAgent } from './agents/debug-agent.js';
+
+// Context-Aware Agent
+export { ContextAgent } from './agents/context-agent.js';
+
+// Context Chain Engine
+export { ContextChainEngine } from './chains/context-chain-engine.js';
+
+// Notification Engine
+export { NotificationEngine } from './notifications/notification-engine.js';
+
+// Analytics Engine
+export { AnalyticsEngine } from './analytics/analytics-engine.js';
+
+// Billing Engine
+export { BillingEngine } from './billing/billing-engine.js';
+
+// Store Layout Mapper
+export { StoreLayoutMapper } from './inventory/store-layout.js';
+
+// Landing Page Data
+export { LandingPageDataEngine } from './marketing/landing-page-data.js';
+
+// Plugin Registry (NEW — Night #16)
+export { PluginRegistry } from './plugins/plugin-registry.js';
+export type {
+  PluginMetadata,
+  PluginInstance,
+  PluginState,
+  PluginCategory,
+  PluginCapability,
+  PluginConfigSchema,
+  PluginConfig,
+  PluginHealthStatus,
+  PluginHook,
+  PricingTier,
+  PluginRegistryConfig,
+  PluginRegistryEvents,
+} from './plugins/plugin-registry.js';
+
+// Setup Wizard (NEW — Night #16)
+export { SetupWizard } from './onboarding/setup-wizard.js';
+export type {
+  WizardStepId,
+  WizardStep,
+  WizardProgress,
+  WizardConfig,
+  WizardEvents,
+  StoreProfile,
+  StoreType,
+  StorePreset,
+  HardwarePairingStatus,
+  TutorialAction,
+} from './onboarding/setup-wizard.js';
+
+// Dashboard Widget System (NEW — Night #16)
+export { WidgetSystem } from './dashboard/widget-system.js';
+export type {
+  WidgetType,
+  WidgetSize,
+  WidgetConfig,
+  WidgetAction,
+  WidgetPosition,
+  WidgetRefresh,
+  DashboardLayout,
+  DashboardView,
+  DashboardTheme,
+  WidgetSystemConfig,
+  WidgetSystemEvents,
+} from './dashboard/widget-system.js';

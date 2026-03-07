@@ -8,11 +8,16 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsx watch src/index.ts",
+    "dev:server": "tsx watch src/server.ts",
+    "start": "node dist/server.js",
+    "start:prod": "NODE_ENV=production node dist/server.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src/ --ext .ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "docker:build": "docker build -t raybans-backend .",
+    "docker:run": "docker run -p 3847:3847 --env-file .env raybans-backend"
   },
   "keywords": [
     "openclaw",
@@ -35,7 +40,8 @@
     "zod": "^3.23.0",
     "uuid": "^10.0.0",
     "better-sqlite3": "^11.0.0",
-    "eventemitter3": "^5.0.0"
+    "eventemitter3": "^5.0.0",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "typescript": "^5.6.0",
@@ -43,6 +49,7 @@
     "tsx": "^4.19.0",
     "@types/node": "^22.0.0",
     "@types/better-sqlite3": "^7.6.0",
-    "@types/uuid": "^10.0.0"
+    "@types/uuid": "^10.0.0",
+    "@types/ws": "^8.5.0"
   }
 }
