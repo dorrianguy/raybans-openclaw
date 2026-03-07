@@ -4,6 +4,139 @@ _Updated by Night Shift agent + daytime development._
 
 ---
 
+## 2026-03-07 — Night Shift #20 (Batch Processing + Store Comparison + Report Builder)
+
+### What Was Built
+1. **Batch Processing Pipeline** (`src/pipeline/batch-processor.ts`) — 48 tests
+   - Async image processing queue with priority ordering (critical > high > normal > low)
+   - Configurable concurrency control (maxConcurrency)
+   - Job lifecycle: queued → processing → completed/failed/retrying/cancelled/expired
+   - Exponential backoff retry with configurable maxRetryDelay
+   - Job dependency tracking: job B waits for job A to complete
+   - TTL expiration: stale jobs auto-expire
+   - Backpressure management: max queue depth + byte-aware limits
+   - Batch operations: enqueue multiple jobs as a group with shared batchId
+   - Batch progress tracking with estimated remaining time
+   - 12 job types: vision_analysis, product_lookup, inventory_merge, export_generate, memory_index, agent_route, thumbnail_generate, ocr_extract, face_detect, barcode_scan, reprocess, custom
+   - Event-driven: job:created/started/completed/failed/retrying/cancelled/expired, batch:progress/completed, queue:full/empty/backpressure
+   - Pause/resume/drain controls for graceful shutdown
+   - Per-handler registration per job type
+   - Voice-friendly status summaries
+   - Rolling stats: avg processing time, throughput/minute, error rate, queue depth
+
+2. **Multi-Store Comparison Engine** (`src/comparison/store-comparison.ts`) — 61 tests
+   - Cross-session, cross-store inventory comparison
+   - Variance detection: quantity_difference, price_difference, missing_at_store, exclusive_product, category_gap, overstocked, understocked
+   - Variance severity classification: critical (understocked), warning (overstocked, price spread > 10%), info (category gaps)
+   - Price comparison: lowest/highest price store, spread percentage, average price, sorted by biggest differences
+   - Availability matrix: which products at which stores, availability percentage, gap identification
+   - Category breakdown: product count, total quantity, and average price per category per store
+   - Trend analysis: linear regression on quantity/price over multiple sessions at same store (increasing/decreasing/stable)
+   - Configurable thresholds: quantity variance %, price variance %, overstock/understock multipliers
+   - Voice-friendly comparison summaries
+   - Full markdown comparison report generation with critical issues, price differences, and availability gaps
+   - Suggestion engine: actionable recommendations for each variance
+
+3. **Report Builder Engine** (`src/reports/report-builder.ts`) — 54 tests
+   - Template-based professional report generation
+   - 3 built-in templates: inventory session, inspection, daily summary
+   - Custom template registration and management
+   - 13 section types: header, summary, table, list, metrics, chart_data, findings, recommendations, images, timeline, text, divider, footer
+   - 4 output formats from one report: Markdown, JSON, CSV, Voice summary
+   - Markdown rendering: severity emojis, bold highlighting, numbered recommendations, timeline icons, table truncation
+   - Findings with severity sorting (critical → major → minor → info)
+   - Metrics with highlighted/trend indicators (↑ ↓)
+   - Quick builders: buildInventoryReport() and buildInspectionReport() for one-call report generation
+   - Branding system: company name, title prefix, footer, confidential banner, timestamp
+   - Configurable: max sections, max table rows, date format (ISO/US/EU/relative), voice summary character limit
+   - CSV export with proper escaping (quotes, commas, newlines)
+   - Auto-calculated inventory summaries: total items, unique products, flagged count, total value, session duration
+   - Auto-generated inspection recommendations based on finding severity and area conditions
+
+### Revenue Ideas (#77-82)
+- **Hotel Room Inspector** — Housekeeping quality AI ($19.99-499/mo, $260B hotel industry, single Marriott deal = $5-20M/year)
+- **Forensic Scene Documenter** — Crime scene documentation AI ($199-4,999/mo, $18B forensic services, NIJ grants = $200M/year)
+- **Ski Patrol / Mountain Safety** — Avalanche hazard + incident documentation ($99-1,999/mo, $5B ski operations, resort insurance reduction 10-20%)
+- **Livestock Auctioneer** — Weight estimation + health grading for cattle ($99-999/mo, $80B cattle industry, 50-lb estimation error = $90/animal)
+- **Dental Lab Technician** — Shade matching for crowns ($49-499/mo, $10B dental lab market, 8-12% remake rate = $1B waste)
+- **Wildland Firefighter** — Fire behavior analysis + safety alerts ($49-2,999/mo, $15B wildfire suppression, NWCG endorsement = 100K+ firefighters)
+
+### Stats: 163 new tests (1,627 total) | ~6,286 lines | 82 revenue ideas | PR pending
+
+### Architecture After Tonight
+```
+src/
+├── types.ts                              # 30+ shared interfaces & types
+├── index.ts                              # Public API
+├── server.ts                             # Server entry point
+├── vision/
+│   └── vision-pipeline.ts                # Image → structured analysis
+├── inventory/
+│   ├── inventory-state.ts / .test.ts     # Running inventory state (42 tests)
+│   ├── product-database.ts / .test.ts    # UPC lookup + caching (24 tests)
+│   └── export-service.ts / .test.ts      # CSV/JSON/report generation (28 tests)
+├── voice/
+│   ├── voice-command-router.ts / .test.ts # Voice command parsing (50 tests)
+│   └── voice-pipeline.ts / .test.ts      # STT → Intent → TTS (66 tests)
+├── bridge/
+│   ├── node-bridge.ts / .test.ts         # OpenClaw node integration (21 tests)
+│   └── image-scheduler.ts / .test.ts     # Smart auto-capture (19 tests)
+├── storage/
+│   └── persistence.ts / .test.ts         # SQLite + FTS5 (38 tests)
+├── routing/
+│   └── context-router.ts / .test.ts      # Intelligent image routing (27 tests)
+├── agents/
+│   ├── inventory-agent.ts                # Inventory orchestrator
+│   ├── memory-agent.ts / .test.ts        # Perfect Memory (24 tests)
+│   ├── networking-agent.ts / .test.ts    # Badge/card scanner (30 tests)
+│   ├── deal-agent.ts / .test.ts          # Price intelligence (50 tests)
+│   ├── security-agent.ts / .test.ts      # Threat detection (69 tests)
+│   ├── meeting-agent.ts / .test.ts       # Meeting intelligence (70 tests)
+│   └── inspection-agent.ts / .test.ts    # Walkthrough reports (67 tests)
+├── billing/
+│   └── stripe-integration.ts / .test.ts  # Stripe subscriptions (80 tests)
+├── dashboard/
+│   ├── api-server.ts                     # REST API + SSE
+│   ├── widget-system.ts / .test.ts       # Dashboard widgets (69 tests)
+│   ├── companion-ws.ts                   # Companion WebSocket
+│   └── production.ts                     # Production config
+├── health/
+│   └── health-monitor.ts / .test.ts      # System health (64 tests)
+├── integration/
+│   └── e2e-flow.test.ts                  # E2E flow tests (14 tests)
+├── offline/
+│   └── offline-queue.ts / .test.ts       # Offline sync (58 tests)
+├── onboarding/
+│   └── setup-wizard.ts / .test.ts        # Setup wizard (98 tests)
+├── pipeline/                              # ← NEW
+│   └── batch-processor.ts / .test.ts     # Async job queue (48 tests)
+├── plugins/
+│   └── plugin-registry.ts / .test.ts     # Plugin system (120 tests)
+├── ratelimit/
+│   └── quota-engine.ts / .test.ts        # Rate limiting (75 tests)
+├── comparison/                            # ← NEW
+│   └── store-comparison.ts / .test.ts    # Multi-store comparison (61 tests)
+├── reports/                               # ← NEW
+│   └── report-builder.ts / .test.ts      # Professional reports (54 tests)
+├── resilience/
+│   └── circuit-breaker.ts / .test.ts     # Circuit breaker (71 tests)
+├── sync/
+│   └── device-sync.ts / .test.ts         # Multi-device sync (68 tests)
+├── telemetry/
+│   └── telemetry-engine.ts / .test.ts    # Observability (65 tests)
+└── webhooks/
+    └── webhook-engine.ts / .test.ts      # Webhook delivery (57 tests)
+```
+
+### What's Next (Priority)
+1. **React Dashboard UI** — Frontend for all the API data
+2. **Landing Page** — Marketing site with pricing and demo
+3. **iOS Companion App** — Dorrian is working on this
+4. **API Gateway & Authentication** — Production auth layer
+5. **Integration testing** — Cross-module E2E scenarios
+
+---
+
 ## 2026-03-06 — Night Shift #19 (Stripe Billing + Offline Queue + Telemetry)
 
 ### What Was Built
