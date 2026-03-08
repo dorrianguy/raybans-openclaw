@@ -222,3 +222,55 @@ export type {
   WidgetSystemConfig,
   WidgetSystemEvents,
 } from './dashboard/widget-system.js';
+
+// API Gateway & Authentication (NEW — Night #21)
+export { ApiGateway } from './gateway/api-gateway.js';
+export type {
+  ApiGatewayConfig,
+  ApiGatewayEvents,
+  AuthMethod,
+  UserRole,
+  Permission,
+  ApiKeyScope,
+  JwtPayload,
+  ApiKey,
+  AuthenticatedRequest,
+  RequestLog,
+  RouteDefinition,
+} from './gateway/api-gateway.js';
+
+// Configuration Engine (NEW — Night #21)
+export { ConfigEngine, PLATFORM_CONFIG_SCHEMA } from './config/config-engine.js';
+export type {
+  ConfigEngineConfig,
+  ConfigEngineEvents,
+  Environment,
+  ConfigSchema,
+  ConfigValue,
+  ConfigSource,
+  ConfigValidationError,
+  FeatureFlag,
+  ConfigChangeEvent,
+  SecretEntry,
+} from './config/config-engine.js';
+
+// Migration Engine (NEW — Night #21)
+export {
+  MigrationEngine,
+  createTableMigration,
+  addColumnMigration,
+  createIndexMigration,
+  seedDataMigration,
+} from './migrations/migration-engine.js';
+export type {
+  MigrationEngineConfig,
+  MigrationEngineEvents,
+  Migration,
+  MigrationFn,
+  MigrationContext,
+  MigrationRecord,
+  MigrationPlan,
+  MigrationDirection,
+  MigrationStatus,
+  MigrationCategory,
+} from './migrations/migration-engine.js';
