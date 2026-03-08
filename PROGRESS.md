@@ -4,6 +4,149 @@ _Updated by Night Shift agent + daytime development._
 
 ---
 
+## 2026-03-08 — Night Shift #21 (API Gateway + Config Engine + Migration Engine)
+
+### What Was Built
+1. **API Gateway & Authentication Middleware** (`src/gateway/api-gateway.ts`) — 86 tests
+   - JWT token management: issue, verify, refresh, revoke with HMAC-SHA256 signing
+   - Refresh token rotation (old token invalidated on use)
+   - API key management: create, verify, revoke, rotate with `rbk_` prefixed keys
+   - 6 user roles: admin, owner, manager, operator, viewer, api_client
+   - 24 granular permission types across 12 resource categories
+   - 5 API key scopes: full, read_only, inventory_only, export_only, webhook_only, custom
+   - Request authentication via Bearer JWT or ApiKey/X-API-Key headers
+   - IP allowlisting and blocklisting
+   - Rate limiting with per-minute bucket tracking
+   - Request logging with PII redaction (email addresses masked)
+   - Request analytics: method/status breakdown, error rate, avg response time, top endpoints
+   - CORS configuration per origin with preflight headers
+   - Route registry with `:param` path matching and parameter extraction
+   - State serialization for persistence (export/import keys, tokens, routes)
+   - Voice-friendly gateway status summaries
+
+2. **Configuration Engine** (`src/config/config-engine.ts`) — 73 tests
+   - Multi-environment support: development, staging, production, test
+   - Schema-based validation: type checking, min/max ranges, pattern matching, enums, length constraints
+   - Hot reload support: runtime config updates for eligible keys (non-hot-reloadable keys blocked)
+   - Feature flags with percentage rollout (deterministic hash-based), user targeting, environment targeting
+   - A/B test variant selection with weighted distribution
+   - Secrets management with AES-256-GCM encryption at rest
+   - Secret versioning and rotation tracking with access audit
+   - Config change audit log with redacted secret values
+   - 24-field platform config schema across 8 categories (server, vision, inventory, storage, auth, billing, voice, telemetry)
+   - Config export with automatic secret redaction
+   - Schema default loading
+   - State serialization for persistence
+
+3. **Migration Engine** (`src/migrations/migration-engine.ts`) — 66 tests
+   - Sequential version-based migration tracking
+   - Up/down migrations with automatic rollback support
+   - Batch execution with batch numbering for grouped rollbacks
+   - Dry-run mode: preview all changes without applying
+   - Migration locking: prevents concurrent migration execution
+   - Migration plan generation: preview migrations to run without executing
+   - Integrity verification: SHA-256 checksum comparison detects modified migrations
+   - Dependency checking: validates migration ordering constraints
+   - 4 built-in migration generators:
+     - `createTableMigration` — DDL with column specs (PK, nullable, default, unique)
+     - `addColumnMigration` — ALTER TABLE with type + constraints
+     - `createIndexMigration` — INDEX with composite column + unique support
+     - `seedDataMigration` — INSERT with automatic SQL escaping + rollback cleanup
+   - Migration context: execute (statement capture), log, setState/getState, dryRun flag, environment
+   - Failed migration tracking with error messages
+   - Full lifecycle test: create → apply → add → apply → rollback → re-apply → verify
+   - Voice-friendly migration status summaries
+
+### Revenue Ideas (#83-88)
+- **Hazmat First Responder** — Chemical ID + ERG response ($99-9,999/mo, $5B hazmat equipment, East Palestine proved the need, PHMSA mandates post-2023)
+- **Court Reporter / Legal Documentor** — Real-time backup transcription ($149-999/mo, $4B court reporting, 5,500 reporter shortage crisis)
+- **Archaeological Dig Documentor** — Layer-by-layer artifact capture ($49-499/mo, $3B CRM industry, Section 106 compliance = guaranteed demand)
+- **Sommeliers & Bartender** — Craft cocktail intelligence ($29.99-999/mo, $50B US spirits, distributor play = $10M+ contracts)
+- **Beekeeper Hive Inspector** — Colony health AI ($14.99-499/mo, $20B pollination services, 40-50% annual colony losses)
+- **Elevator / Escalator Inspector** — 150+ safety point verification ($149-4,999/mo, $30B elevator maintenance, Otis partnership = $30M+)
+
+### Stats: 225 new tests (1,852 total) | ~6,105 lines | 88 revenue ideas | PR pending
+
+### Architecture After Tonight
+```
+src/
+├── types.ts                              # 30+ shared interfaces & types
+├── index.ts                              # Public API (updated)
+├── server.ts                             # Server entry point
+├── vision/
+│   └── vision-pipeline.ts                # Image → structured analysis
+├── inventory/
+│   ├── inventory-state.ts / .test.ts     # Running inventory state (42 tests)
+│   ├── product-database.ts / .test.ts    # UPC lookup + caching (24 tests)
+│   └── export-service.ts / .test.ts      # CSV/JSON/report generation (28 tests)
+├── voice/
+│   ├── voice-command-router.ts / .test.ts # Voice command parsing (50 tests)
+│   └── voice-pipeline.ts / .test.ts      # STT → Intent → TTS (66 tests)
+├── bridge/
+│   ├── node-bridge.ts / .test.ts         # OpenClaw node integration (21 tests)
+│   └── image-scheduler.ts / .test.ts     # Smart auto-capture (19 tests)
+├── storage/
+│   └── persistence.ts / .test.ts         # SQLite + FTS5 (38 tests)
+├── routing/
+│   └── context-router.ts / .test.ts      # Intelligent image routing (27 tests)
+├── agents/
+│   ├── inventory-agent.ts                # Inventory orchestrator
+│   ├── memory-agent.ts / .test.ts        # Perfect Memory (24 tests)
+│   ├── networking-agent.ts / .test.ts    # Badge/card scanner (30 tests)
+│   ├── deal-agent.ts / .test.ts          # Price intelligence (50 tests)
+│   ├── security-agent.ts / .test.ts      # Threat detection (69 tests)
+│   ├── meeting-agent.ts / .test.ts       # Meeting intelligence (70 tests)
+│   └── inspection-agent.ts / .test.ts    # Walkthrough reports (67 tests)
+├── billing/
+│   └── stripe-integration.ts / .test.ts  # Stripe subscriptions (80 tests)
+├── dashboard/
+│   ├── api-server.ts                     # REST API + SSE
+│   ├── widget-system.ts / .test.ts       # Dashboard widgets (69 tests)
+│   ├── companion-ws.ts                   # Companion WebSocket
+│   └── production.ts                     # Production config
+├── health/
+│   └── health-monitor.ts / .test.ts      # System health (64 tests)
+├── integration/
+│   └── e2e-flow.test.ts                  # E2E flow tests (14 tests)
+├── offline/
+│   └── offline-queue.ts / .test.ts       # Offline sync (58 tests)
+├── onboarding/
+│   └── setup-wizard.ts / .test.ts        # Setup wizard (98 tests)
+├── pipeline/
+│   └── batch-processor.ts / .test.ts     # Async job queue (48 tests)
+├── plugins/
+│   └── plugin-registry.ts / .test.ts     # Plugin system (120 tests)
+├── ratelimit/
+│   └── quota-engine.ts / .test.ts        # Rate limiting (75 tests)
+├── comparison/
+│   └── store-comparison.ts / .test.ts    # Multi-store comparison (61 tests)
+├── reports/
+│   └── report-builder.ts / .test.ts      # Professional reports (54 tests)
+├── resilience/
+│   └── circuit-breaker.ts / .test.ts     # Circuit breaker (71 tests)
+├── sync/
+│   └── device-sync.ts / .test.ts         # Multi-device sync (68 tests)
+├── telemetry/
+│   └── telemetry-engine.ts / .test.ts    # Observability (65 tests)
+├── webhooks/
+│   └── webhook-engine.ts / .test.ts      # Webhook delivery (57 tests)
+├── gateway/                               # ← NEW
+│   └── api-gateway.ts / .test.ts         # JWT + API keys + RBAC (86 tests)
+├── config/                                # ← NEW
+│   └── config-engine.ts / .test.ts       # Config + flags + secrets (73 tests)
+└── migrations/                            # ← NEW
+    └── migration-engine.ts / .test.ts    # Schema versioning (66 tests)
+```
+
+### What's Next (Priority)
+1. **React Dashboard UI** — Frontend for all the API data
+2. **Landing Page** — Marketing site with pricing and demo
+3. **iOS Companion App** — Dorrian is working on this
+4. **Database Schema Migrations** — Define initial schema using migration engine
+5. **E2E Auth Flow** — Wire API gateway into dashboard API server
+
+---
+
 ## 2026-03-07 — Night Shift #20 (Batch Processing + Store Comparison + Report Builder)
 
 ### What Was Built
@@ -872,3 +1015,12 @@ src/
 | Circuit Breaker Engine | 🟢 | Full CB + retry + fallback + registry + 7 profiles |
 | Health Monitor | 🟢 | Component health, alerts, recovery, diagnostics, voice summary |
 | Device Sync Engine | 🟢 | Multi-device sync, vector clocks, conflict resolution, snapshots |
+| Stripe Billing | 🟢 | Full lifecycle, 5 plans, usage billing, dunning, revenue metrics |
+| Offline Queue | 🟢 | Priority queue, connectivity FSM, batch drain, conflict detection |
+| Telemetry Engine | 🟢 | Structured logging, spans, metrics, session analytics, privacy redaction |
+| Batch Processor | 🟢 | Async job queue, concurrency, retry, backpressure, dependencies |
+| Store Comparison | 🟢 | Cross-store variance detection, price comparison, trend analysis |
+| Report Builder | 🟢 | Template-based, 4 output formats, 13 section types, quick builders |
+| API Gateway | 🟢 | JWT + API keys + RBAC, 24 permissions, 6 roles, rate limiting, CORS |
+| Config Engine | 🟢 | Multi-env, validation, feature flags, A/B variants, encrypted secrets |
+| Migration Engine | 🟢 | Schema versioning, up/down, dry-run, locking, 4 generators, integrity |
