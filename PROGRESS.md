@@ -4,6 +4,165 @@ _Updated by Night Shift agent + daytime development._
 
 ---
 
+## 2026-03-09 — Night Shift #22 (User Management + Notification Router + Admin CLI)
+
+### What Was Built
+1. **User Management Engine** (`src/users/user-manager.ts`) — 112 tests
+   - User CRUD: create, read, update, delete with email normalization and validation
+   - Authentication: password hashing (PBKDF2-SHA512 + salt), login with lockout protection
+   - Password management: change (verify current), reset (admin flow), strength validation
+   - User status lifecycle: active → suspended → inactive, email verification flow
+   - 5 auth providers: email, Google, GitHub, Apple, SAML
+   - User preferences system with 5 categories:
+     - Notifications (channel selection, quiet hours, alert types)
+     - Privacy (level, analytics sharing, face blur, geofence zones with validation)
+     - Voice (TTS speed/voice/wake word, briefing length)
+     - Accessibility (high contrast, large text, screen reader, color blind modes)
+     - Dashboard (theme, compact mode, pinned widgets, tutorials)
+   - Team management: create, update, delete teams with plan-based member limits
+   - Team roles: owner, admin, member, viewer with role changes and ownership transfer
+   - Invitation system: create → accept (by ID or token) → join team, with expiry and revocation
+   - Duplicate invitation prevention, capacity checks including pending invitations
+   - User querying: search by name/email, filter by status/provider/team, sort, paginate
+   - Activity logging: tracks all user actions with automatic retention cleanup
+   - Statistics: user/team/invitation counts, auth provider breakdown
+   - Secure state export: password hashes and invitation tokens auto-redacted
+   - Voice-friendly user/team summaries
+   - Event-driven: 18 event types across user, team, and invitation lifecycle
+
+2. **Notification Router** (`src/notifications/notification-router.ts`) — 67 tests
+   - Multi-channel delivery: email, push, SMS, in-app, voice (TTS to glasses)
+   - Priority-based routing: critical → all channels, high → push+email+in_app, normal → push+in_app, low → in_app
+   - Channel adapter system: pluggable adapters per channel with send interface
+   - User notification settings: per-user channel preferences, category opt-in/out, category-specific channels
+   - Quiet hours: time-range based channel filtering (overnight = in_app+email only), critical bypass
+   - Template system: register templates with {{variable}} interpolation, voice templates, category defaults
+   - Delivery tracking: queued → sending → sent → delivered → failed → read lifecycle per channel
+   - Provider message ID tracking for delivery confirmation
+   - Retry with configurable max attempts per failed delivery
+   - Digest batching: low-priority notifications queued for periodic digest (opt-in per user)
+   - Rate limiting: per-user hourly and daily caps with automatic skip on exceed
+   - Read/dismiss tracking: mark individual or bulk read, dismiss with timestamps
+   - Notification querying: filter by user/category/priority/unread, paginate, sort newest-first
+   - Unread count with per-category breakdown
+   - Batch send: send multiple notifications in sequence
+   - Cleanup: expired notification removal, per-user history limit enforcement
+   - Statistics: total notifications, delivery success rate, per-category/priority/channel breakdown
+   - Voice summaries: "You have 3 unread notifications: 2 inventory, 1 security"
+   - Event-driven: 9 event types (created, sent, delivered, failed, read, dismissed, rate_limited, digest, channel_registered)
+
+3. **Admin CLI** (`src/cli/admin-cli.ts`) — 76 tests
+   - Command parser: tokenizer with quoted string support, --flag and --key=value options, --format override
+   - 4 built-in command categories:
+     - **config**: get, set, list, env, validate, export, reset — full configuration management
+     - **health**: status (overall system), check (per-component), list (all components), diagnostics (memory, uptime, node version)
+     - **migrate**: status, up (with --dry-run), down (with --steps=N), plan, verify (checksums), reset (with --confirm safety)
+     - **system**: version, status, info (platform details)
+   - Help system: general help listing all categories + aliases, per-command help with subcommands, args, options, and examples
+   - Alias system: built-in aliases (v, status, h, ?) + custom alias add/remove
+   - Command history: tracked with timestamp, success/failure, duration; configurable max size, clearable
+   - Handler registration: plug in custom handlers for any category
+   - 4 output formats: text (default), JSON (structured), table (formatted with column alignment), voice (TTS-friendly)
+   - Event-driven: command execute, complete, and error events
+   - Extensible: health handler exposes setComponentStatus for external integration
+   - Extensible: migrate handler exposes addMigration for external integration
+
+### Revenue Ideas (#89-94)
+- **Tattoo Removal Progress Tracker** — AI ink density mapping + patient retention ($79-499/mo, $5B removal market, 40% patient abandonment = massive retention opportunity)
+- **Data Center Walk-Through Auditor** — Rack-by-rack AI audit ($199-2,999/mo, $250B data center ops, Equinix deal = $3-10M/year)
+- **Physical Therapist Movement Analyzer** — Markerless motion analysis ($49-999/mo, $42B PT services, workers' comp carrier play = $5-20M/year)
+- **Cemetery / Memorial Cataloger** — Headstone OCR + digital preservation ($29-999/mo, $22B cemetery services, Ancestry.com partnership play)
+- **Industrial Crane Operator Assist** — Real-time capacity monitoring ($149-2,999/mo, $15B crane operations, 90+ deaths/year = critical safety need)
+- **Wine Vineyard Canopy Manager** — Vine-level health + quality optimization ($79-999/mo, $80B US wine, Napa premium = $150K consulting → $6K AI)
+
+### Stats: 255 new tests (2,107 total) | ~6,100 lines | 94 revenue ideas | PR #8
+
+### Architecture After Tonight
+```
+src/
+├── types.ts                              # 30+ shared interfaces & types
+├── index.ts                              # Public API (updated)
+├── server.ts                             # Server entry point
+├── vision/
+│   └── vision-pipeline.ts                # Image → structured analysis
+├── inventory/
+│   ├── inventory-state.ts / .test.ts     # Running inventory state (42 tests)
+│   ├── product-database.ts / .test.ts    # UPC lookup + caching (24 tests)
+│   └── export-service.ts / .test.ts      # CSV/JSON/report generation (28 tests)
+├── voice/
+│   ├── voice-command-router.ts / .test.ts # Voice command parsing (50 tests)
+│   └── voice-pipeline.ts / .test.ts      # STT → Intent → TTS (66 tests)
+├── bridge/
+│   ├── node-bridge.ts / .test.ts         # OpenClaw node integration (21 tests)
+│   └── image-scheduler.ts / .test.ts     # Smart auto-capture (19 tests)
+├── storage/
+│   └── persistence.ts / .test.ts         # SQLite + FTS5 (38 tests)
+├── routing/
+│   └── context-router.ts / .test.ts      # Intelligent image routing (27 tests)
+├── agents/
+│   ├── inventory-agent.ts                # Inventory orchestrator
+│   ├── memory-agent.ts / .test.ts        # Perfect Memory (24 tests)
+│   ├── networking-agent.ts / .test.ts    # Badge/card scanner (30 tests)
+│   ├── deal-agent.ts / .test.ts          # Price intelligence (50 tests)
+│   ├── security-agent.ts / .test.ts      # Threat detection (69 tests)
+│   ├── meeting-agent.ts / .test.ts       # Meeting intelligence (70 tests)
+│   └── inspection-agent.ts / .test.ts    # Walkthrough reports (67 tests)
+├── billing/
+│   └── stripe-integration.ts / .test.ts  # Stripe subscriptions (80 tests)
+├── dashboard/
+│   ├── api-server.ts                     # REST API + SSE
+│   ├── widget-system.ts / .test.ts       # Dashboard widgets (69 tests)
+│   ├── companion-ws.ts                   # Companion WebSocket
+│   └── production.ts                     # Production config
+├── health/
+│   └── health-monitor.ts / .test.ts      # System health (64 tests)
+├── integration/
+│   └── e2e-flow.test.ts                  # E2E flow tests (14 tests)
+├── offline/
+│   └── offline-queue.ts / .test.ts       # Offline sync (58 tests)
+├── onboarding/
+│   └── setup-wizard.ts / .test.ts        # Setup wizard (98 tests)
+├── pipeline/
+│   └── batch-processor.ts / .test.ts     # Async job queue (48 tests)
+├── plugins/
+│   └── plugin-registry.ts / .test.ts     # Plugin system (120 tests)
+├── ratelimit/
+│   └── quota-engine.ts / .test.ts        # Rate limiting (75 tests)
+├── comparison/
+│   └── store-comparison.ts / .test.ts    # Multi-store comparison (61 tests)
+├── reports/
+│   └── report-builder.ts / .test.ts      # Professional reports (54 tests)
+├── resilience/
+│   └── circuit-breaker.ts / .test.ts     # Circuit breaker (71 tests)
+├── sync/
+│   └── device-sync.ts / .test.ts         # Multi-device sync (68 tests)
+├── telemetry/
+│   └── telemetry-engine.ts / .test.ts    # Observability (65 tests)
+├── webhooks/
+│   └── webhook-engine.ts / .test.ts      # Webhook delivery (57 tests)
+├── gateway/
+│   └── api-gateway.ts / .test.ts         # JWT + API keys + RBAC (86 tests)
+├── config/
+│   └── config-engine.ts / .test.ts       # Config + flags + secrets (73 tests)
+├── migrations/
+│   └── migration-engine.ts / .test.ts    # Schema versioning (66 tests)
+├── users/                                 # ← NEW
+│   └── user-manager.ts / .test.ts        # Users + teams + invites (112 tests)
+├── notifications/                         # ← NEW (replaces notification-engine)
+│   └── notification-router.ts / .test.ts # Multi-channel delivery (67 tests)
+└── cli/                                   # ← NEW
+    └── admin-cli.ts / .test.ts           # Platform admin CLI (76 tests)
+```
+
+### What's Next (Priority)
+1. **React Dashboard UI** — Frontend for all the API data
+2. **Landing Page** — Marketing site with pricing and demo
+3. **iOS Companion App** — Dorrian is working on this
+4. **Database Schema Definitions** — Use migration engine to define initial tables
+5. **E2E Auth Flow** — Wire user management + API gateway + dashboard
+
+---
+
 ## 2026-03-08 — Night Shift #21 (API Gateway + Config Engine + Migration Engine)
 
 ### What Was Built
