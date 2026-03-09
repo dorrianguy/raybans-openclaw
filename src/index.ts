@@ -274,3 +274,63 @@ export type {
   MigrationStatus,
   MigrationCategory,
 } from './migrations/migration-engine.js';
+
+// User Management (NEW — Night #22)
+export { UserManager } from './users/user-manager.js';
+export type {
+  UserManagerConfig,
+  UserManagerEvents,
+  User,
+  UserStatus,
+  UserPreferences,
+  NotificationPreferences,
+  PrivacyPreferences,
+  VoicePreferences,
+  AccessibilityPreferences,
+  DashboardPreferences,
+  GeoPrivacyZone,
+  Team,
+  TeamSettings,
+  TeamMember,
+  TeamRole,
+  Invitation,
+  InvitationStatus,
+  AuthProvider,
+  ActivityLog,
+  UserQuery,
+  CreateUserInput,
+  UpdateUserInput,
+} from './users/user-manager.js';
+
+// Notification Router (NEW — Night #22)
+export { NotificationRouter } from './notifications/notification-router.js';
+export type {
+  NotificationRouterConfig,
+  NotificationRouterEvents,
+  NotificationPayload,
+  NotificationRecord,
+  NotificationPriority,
+  NotificationCategory,
+  DeliveryChannel,
+  DeliveryStatus,
+  DeliveryRecord,
+  NotificationTemplate,
+  UserNotificationSettings,
+  NotificationQuery,
+  NotificationAction,
+  ChannelAdapter,
+} from './notifications/notification-router.js';
+
+// Admin CLI (NEW — Night #22)
+export { AdminCli } from './cli/admin-cli.js';
+export type {
+  AdminCliConfig,
+  AdminCliEvents,
+  ParsedCommand,
+  CommandResult,
+  CommandHandler,
+  CommandHelp,
+  CommandCategory,
+  OutputFormat,
+  HistoryEntry,
+} from './cli/admin-cli.js';
