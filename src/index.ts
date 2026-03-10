@@ -334,3 +334,55 @@ export type {
   OutputFormat,
   HistoryEntry,
 } from './cli/admin-cli.js';
+
+// Audit Trail (NEW — Night #23)
+export { AuditTrail } from './audit/audit-trail.js';
+export type {
+  AuditTrailConfig,
+  AuditTrailEvents,
+  AuditEvent,
+  AuditEventCategory,
+  AuditSeverity,
+  AuditOutcome,
+  AuditActor,
+  AuditTarget,
+  AuditChange,
+  AuditQuery,
+  AuditRetentionPolicy,
+  AuditStats,
+  AuditExportOptions,
+} from './audit/audit-trail.js';
+
+// Schema Initializer (NEW — Night #23)
+export {
+  SchemaInitializer,
+  ALL_MIGRATIONS,
+  generateCreateTableSQL,
+  generateCreateIndexSQL,
+  generateDropTableSQL,
+  generateMigrationSQL,
+} from './schema/schema-initializer.js';
+export type {
+  SchemaInitializerConfig,
+  SchemaInitializerEvents,
+  TableDefinition,
+  ColumnDefinition,
+  IndexDefinition,
+  ForeignKeyDefinition,
+  MigrationDefinition,
+} from './schema/schema-initializer.js';
+
+// Workflow Orchestrator (NEW — Night #23)
+export { WorkflowOrchestrator } from './workflows/workflow-orchestrator.js';
+export type {
+  WorkflowOrchestratorConfig,
+  WorkflowOrchestratorEvents,
+  WorkflowDefinition,
+  StepDefinition,
+  WorkflowContext,
+  StepExecution,
+  WorkflowExecution,
+  WorkflowStatus,
+  StepStatus,
+  StepHandler,
+} from './workflows/workflow-orchestrator.js';
