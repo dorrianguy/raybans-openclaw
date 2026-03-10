@@ -350,6 +350,7 @@ export class MockGlassesProvider implements IGlassesProvider {
   private gestureInterval: ReturnType<typeof setInterval> | null = null;
   private connectedDevice: GlassesDevice | null = null;
   private mockBatteryLevel = 78;
+  private activeSound: import('expo-av').Audio.Sound | null = null;
 
   constructor(callbacks: GlassesConnectionCallbacks) {
     this.callbacks = callbacks;
@@ -590,20 +591,123 @@ export class MockGlassesProvider implements IGlassesProvider {
       this.audioInterval = null;
     }
     try {
-      await Audio.setAudioModeAsync({ allowsRecordingIOS: false });
+      // Keep playsInSilentModeIOS: true so TTS can play through BT device immediately after
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+        playsInSilentModeIOS: true,
+      });
     } catch {
       // Ignore
     }
   }
 
-  async playAudio(_audioData: string, _format: 'pcm16' | 'opus' | 'aac'): Promise<void> {
+  async playAudio(audioData: string, format: 'pcm16' | 'opus' | 'aac'): Promise<void> {
     if (!this.isConnected) throw new Error('Not connected');
-    // Mock: audio would play through glasses speakers
-    console.log('[MockProvider] Playing audio through glasses speakers');
+
+    // Stop any currently playing audio
+    await this.stopAudio();
+
+    try {
+      // Switch audio session to playback mode so iOS routes to connected BT device
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+        playsInSilentModeIOS: true,
+        staysActiveInBackground: false,
+      });
+
+      let uri: string;
+
+      if (format === 'pcm16') {
+        // Decode base64 PCM16 and wrap in WAV header
+        // Cartesia Sonic outputs PCM16 at 24kHz mono
+        const binary = atob(audioData);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) {
+          bytes[i] = binary.charCodeAt(i);
+        }
+        const wavBuffer = this.wrapPcm16InWav(bytes.buffer, 24000, 1, 16);
+        const wavBytes = new Uint8Array(wavBuffer);
+        let wavBinary = '';
+        for (let i = 0; i < wavBytes.length; i += 1024) {
+          wavBinary += String.fromCharCode(
+            ...wavBytes.subarray(i, Math.min(i + 1024, wavBytes.length)),
+          );
+        }
+        uri = `data:audio/wav;base64,${btoa(wavBinary)}`;
+      } else {
+        // For aac/opus formats, play directly
+        uri = `data:audio/${format};base64,${audioData}`;
+      }
+
+      const { sound } = await Audio.Sound.createAsync(
+        { uri },
+        { shouldPlay: true },
+      );
+      this.activeSound = sound;
+
+      await new Promise<void>((resolve) => {
+        sound.setOnPlaybackStatusUpdate((status) => {
+          if ('didJustFinish' in status && status.didJustFinish) {
+            sound.unloadAsync().catch(() => {});
+            this.activeSound = null;
+            resolve();
+          }
+        });
+      });
+    } catch (error) {
+      this.activeSound = null;
+      console.warn('[MockProvider] playAudio failed:', error);
+      throw error;
+    }
   }
 
   async stopAudio(): Promise<void> {
-    // No-op for mock
+    if (this.activeSound) {
+      try {
+        await this.activeSound.stopAsync();
+        await this.activeSound.unloadAsync();
+      } catch {
+        // Ignore errors during stop
+      }
+      this.activeSound = null;
+    }
+  }
+
+  private wrapPcm16InWav(
+    pcmData: ArrayBuffer,
+    sampleRate: number,
+    channels: number,
+    bitsPerSample: number,
+  ): ArrayBuffer {
+    const byteRate = sampleRate * channels * (bitsPerSample / 8);
+    const blockAlign = channels * (bitsPerSample / 8);
+    const dataSize = pcmData.byteLength;
+    const headerSize = 44;
+    const buffer = new ArrayBuffer(headerSize + dataSize);
+    const view = new DataView(buffer);
+
+    const writeStr = (offset: number, str: string) => {
+      for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
+    };
+
+    writeStr(0, 'RIFF');
+    view.setUint32(4, 36 + dataSize, true);
+    writeStr(8, 'WAVE');
+    writeStr(12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);     // PCM
+    view.setUint16(22, channels, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, byteRate, true);
+    view.setUint16(32, blockAlign, true);
+    view.setUint16(34, bitsPerSample, true);
+    writeStr(36, 'data');
+    view.setUint32(40, dataSize, true);
+
+    const wavBytes = new Uint8Array(buffer);
+    wavBytes.set(new Uint8Array(pcmData), headerSize);
+
+    return buffer;
   }
 
   dispose(): void {
