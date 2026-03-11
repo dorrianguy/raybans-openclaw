@@ -4,6 +4,174 @@ _Updated by Night Shift agent + daytime development._
 
 ---
 
+## 2026-02-24 — Night Shift #13 (Translation Agent + Debug Agent + Context-Aware Assistant)
+
+### What Was Built
+
+#### 1. Translation Agent (`src/agents/translation-agent.ts`)
+- **Your multilingual companion** — not just translation, full cultural intelligence
+- **Language Detection:** 20+ languages via script analysis (CJK, Arabic, Thai, Cyrillic, Devanagari, Tamil, Telugu, Georgian, Hebrew, Greek) + pattern matching for Latin-script languages (German, French, Spanish, Italian, Portuguese, Dutch, Swedish, Polish, Turkish, Vietnamese)
+- **Cultural Briefings:** 10 countries with deep cultural data:
+  - **Japan:** 7 etiquette rules, 5 useful phrases, 5 business norms, 4 taboos, tipping customs
+  - **South Korea:** 5 etiquette rules, 4 phrases, 3 business norms, 2 taboos
+  - **China:** 5 etiquette rules, 4 phrases, tipping customs, 3 taboos
+  - **France:** 5 etiquette rules, 4 phrases, tipping customs, 3 taboos
+  - **Germany:** 4 etiquette rules, 4 phrases, tipping customs
+  - **Mexico:** 4 etiquette rules, 4 phrases, tipping customs
+  - **Italy:** 4 etiquette rules, 3 phrases, tipping customs
+  - **Brazil:** 3 etiquette rules, 3 phrases, tipping customs
+  - **India:** 5 etiquette rules, 3 phrases, tipping customs
+  - **Thailand:** 5 etiquette rules, 3 phrases, tipping customs
+- **Content Classification:** Automatically detects menus, signs, documents, labels, business cards, screens — in any language
+- **Menu Parser:** Extracts dish names and prices from OCR text with multiple format support
+- **Sign Guidance:** Practical plain-English guidance for exit, entrance, warning, restroom, parking, no-smoking signs
+- **Voice Summaries:** TTS-friendly output with language ID, translations, menu highlights, cultural tips
+- **History & Search:** Full translation history with text/language search
+- **94 tests**
+
+#### 2. Debug Agent (`src/agents/debug-agent.ts`)
+- **Hands-free code debugging** — look at any screen and get the fix through your speaker
+- **Language Detection:** 17 programming languages recognized:
+  - TypeScript, JavaScript, Python, Java, C#, Go, Rust, Ruby, PHP, Shell, SQL, YAML, JSON, Dockerfile, HTML, CSS, Nginx
+  - Priority boosting for project languages
+- **Content Classification:** Distinguishes stack traces, error messages, code, config files, log output, terminal output, API responses, documentation
+- **Error Parsing:** 14 structured error parsers covering:
+  - JS/TS: TypeError, ReferenceError, SyntaxError, RangeError
+  - Python: ImportError, ModuleNotFoundError, AttributeError, KeyError, ValueError
+  - Java: NullPointerException, ClassNotFoundException, IOException
+  - Go: panic, goroutine crashes
+  - System: permission denied, network errors, timeouts, memory errors, ENOENT, deprecation warnings
+  - With file path, line number, and column extraction
+- **Fix Suggestions:** 12 common fix patterns with step-by-step instructions:
+  - Null reference → optional chaining/null check
+  - Module not found → install dependency
+  - Syntax error → bracket/semicolon check
+  - CORS → middleware setup
+  - Connection refused → service check
+  - JWT expired → token refresh
+  - Out of memory → heap increase
+  - Permission denied → ownership change
+  - Segfault → debugger guidance
+  - Deadlock → lock ordering
+- **Security Warnings:** Detects hardcoded passwords, eval() usage, console.log statements, TODO/FIXME markers
+- **Multi-Snap Context:** Accumulate code context across multiple screen captures for scrolling through long files
+- **92 tests**
+
+#### 3. Context-Aware Assistant (`src/agents/context-agent.ts`)
+- **Knows what you're doing and helps without asking** — the smartest assistant
+- **9 Context Types:** Kitchen, grocery store, workshop, gym, outdoor/nature, restaurant, vehicle, medical, office
+- **Context Detection:** Multi-signal scoring from objects, scene descriptions, OCR text, and vision scene types
+- **Kitchen Intelligence:**
+  - Temperature conversions (°F ↔ °C)
+  - Measurement conversions (tsp, tbsp, cup, oz, ml, g, lb, kg)
+  - Recipe step tracking for active cooking tasks
+  - Ingredient/item identification
+- **Grocery Intelligence:**
+  - Nutrition alert engine with 15+ dietary restriction patterns:
+    - Gluten-free, dairy-free, vegan, vegetarian, nut-free, pescatarian
+    - Halal, kosher, keto, paleo, low sodium, low sugar, low carb
+  - Custom allergen detection (user-configurable)
+  - Sugar/calorie tracking against daily targets
+  - Product identification from barcode/visual
+  - Shopping list integration
+- **Workshop Intelligence:**
+  - Bolt/fastener identification (M6-M12 metric, 1/4"-1/2" SAE with torque specs)
+  - Tool identification from detected objects
+  - mm ↔ inches conversion
+  - Safety reminders
+- **Gym Intelligence:**
+  - Equipment identification
+  - Weight unit conversion (lbs ↔ kg)
+  - Workout progress tracking
+  - Fitness limitation reminders
+- **Vehicle Intelligence:** Check engine light detection, tire pressure monitoring, VIN detection
+- **Medical Intelligence:** Dosage detection, safety disclaimers
+- **Task Management:** Add/remove/update tasks, track recipe steps, workout progress, shopping lists
+- **Proactiveness Levels:** Silent, conservative, helpful, proactive — configurable sensitivity
+- **Voice Summaries:** Critical alerts first, then identification, then contextual info
+- **64 tests**
+
+#### 4. Revenue Brainstorming — 6 New Ideas
+- **#41 Language Tutor** — "Learn by Living" ($14.99-999/mo, $61B language learning market). Context-based learning with 300% better retention.
+- **#42 Elderly Care Monitor** — "Independent Living, Safe Living" ($19.99-199/mo, $1.7T elderly care market). Fall detection, medication reminders, Medicare reimbursable.
+- **#43 Wildlife Safari Guide** — "Your AI Naturalist" ($9.99-499/mo, $120B wildlife tourism). Real-time species ID by sight AND sound.
+- **#44 Interior Design Visualizer** — "Redesign Any Room" ($9.99-999/mo, $175B interior design). Room analysis + furniture recommendations + affiliate revenue.
+- **#45 Bartender Assistant** — "Master Mixologist" ($7.99-199/mo, $100B spirits market). Scan your bar → instant cocktail menu.
+- **#46 Handwriting-to-Digital** — "Never Lose a Whiteboard" ($9.99-499/mo, $5.2B digital whiteboard market). Real-time OCR + diagram/equation detection.
+
+### Stats
+- **6 files** (3 modules + 3 test suites) + updated index
+- **~17,649 lines of code** added
+- **823 total tests** (250 new this session, all passing)
+- **6 new revenue ideas** documented with full specs
+- **46 total revenue ideas** in REVENUE-FEATURES.md
+
+### Architecture After Tonight
+```
+src/
+├── types.ts                              # 30+ shared interfaces & types
+├── index.ts                              # Public API (updated with all 3 new agents)
+├── server.ts                             # Production server
+├── vision/
+│   └── vision-pipeline.ts                # Image → structured analysis
+├── inventory/
+│   ├── inventory-state.ts                # Running inventory state
+│   ├── inventory-state.test.ts           # 42 tests
+│   ├── product-database.ts              # UPC lookup + caching
+│   ├── product-database.test.ts         # 24 tests
+│   ├── export-service.ts                # CSV/JSON/report generation
+│   └── export-service.test.ts           # 28 tests
+├── voice/
+│   ├── voice-command-router.ts          # Voice command parsing
+│   └── voice-command-router.test.ts     # 50 tests
+├── bridge/
+│   ├── node-bridge.ts                   # OpenClaw node integration
+│   ├── node-bridge.test.ts              # 21 tests
+│   ├── image-scheduler.ts              # Smart auto-capture
+│   └── image-scheduler.test.ts          # 19 tests
+├── storage/
+│   ├── persistence.ts                   # SQLite persistence layer
+│   └── persistence.test.ts              # 38 tests
+├── routing/
+│   ├── context-router.ts               # Intelligent image routing
+│   └── context-router.test.ts           # 27 tests
+├── agents/
+│   ├── inventory-agent.ts               # Inventory orchestrator
+│   ├── memory-agent.ts                  # Perfect Memory
+│   ├── memory-agent.test.ts             # 24 tests
+│   ├── networking-agent.ts              # Badge/card scanner
+│   ├── networking-agent.test.ts         # 30 tests
+│   ├── deal-agent.ts                    # Price intelligence
+│   ├── deal-agent.test.ts              # 50 tests
+│   ├── security-agent.ts               # Threat detection
+│   ├── security-agent.test.ts           # 69 tests
+│   ├── meeting-agent.ts                # Meeting intelligence
+│   ├── meeting-agent.test.ts            # 70 tests
+│   ├── inspection-agent.ts             # Walkthrough reports
+│   ├── inspection-agent.test.ts         # 67 tests
+│   ├── translation-agent.ts            # ← NEW: Translation + cultural intel
+│   ├── translation-agent.test.ts        # 94 tests
+│   ├── debug-agent.ts                  # ← NEW: Code debugging via vision
+│   ├── debug-agent.test.ts              # 92 tests
+│   ├── context-agent.ts               # ← NEW: Context-aware assistant
+│   └── context-agent.test.ts            # 64 tests
+├── integration/
+│   └── e2e-flow.test.ts                # 14 end-to-end tests
+└── dashboard/
+    ├── api-server.ts                    # REST API + SSE for dashboard
+    ├── companion-ws.ts                  # Companion app WebSocket
+    └── production.ts                    # Production server entry
+```
+
+### What's Next (Priority)
+1. **Web Dashboard UI** — React frontend connecting to the API server
+2. **Context Chain Engine** — Feature #10: multi-agent workflows (pre-meeting → during → post)
+3. **Store Layout Mapping** — Aisle/section tracking with GPS correlation
+4. **Voice Router Integration** — Connect new agents to voice command pipeline
+5. **Agent Registration System** — Dynamic plugin registration for the context router
+
+---
+
 ## 2026-02-22 — Night Shift #12 (Security Agent + Meeting Intelligence + Inspection Agent)
 
 ### What Was Built
@@ -549,13 +717,13 @@ src/
 | Networking Agent | 🟢 | Badge/card OCR, research, briefings, dedup |
 | Deal Analysis Agent | 🟢 | Products/vehicles/real estate, verdicts, negotiation |
 | Integration Tests | 🟢 | 14 E2E flow tests with mock vision |
-| Unit Tests | 🟢 | 573 tests, all passing |
+| Unit Tests | 🟢 | 823 tests, all passing |
 | Security Agent | 🟢 | QR decode, URL analysis, document risk, phishing detection, sensitive data, physical security |
 | Meeting Intel Agent | 🟢 | Transcript, action items, decisions, visual capture, summaries |
 | Inspection Agent | 🟢 | 6 types, 33+ auto-patterns, professional reports |
+| Translation Agent | 🟢 | 20+ languages, 10 countries, menus/signs/docs, cultural briefings |
+| Debug Agent | 🟢 | 17 languages, error parsing, fix suggestions, security warnings |
+| Context-Aware Assistant | 🟢 | 9 contexts, nutrition alerts, bolt specs, task tracking |
 | Dashboard UI | 🔴 | React frontend planned |
 | Context Chain Engine | 🔴 | Multi-agent workflow orchestration |
 | Store Layout Mapping | 🔴 | Aisle tracking + GPS |
-| Translation Agent | 🔴 | Multilingual OCR + cultural context |
-| Debug Agent | 🔴 | Code/error analysis via vision |
-| Context-Aware Assistant | 🔴 | Contextual help (kitchen, gym, etc.) |

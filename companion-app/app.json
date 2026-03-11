@@ -21,7 +21,8 @@
         "NSBluetoothPeripheralUsageDescription": "Connect to Ray-Ban Meta smart glasses",
         "NSMicrophoneUsageDescription": "Voice commands for Siberius AI",
         "NSLocationWhenInUseUsageDescription": "Geo-tag captures from glasses",
-        "NSSpeechRecognitionUsageDescription": "Process voice commands"
+        "NSSpeechRecognitionUsageDescription": "Process voice commands",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -43,7 +44,6 @@
     "plugins": [
       "expo-router",
       "expo-font",
-      "expo-speech",
       [
         "expo-location",
         {
@@ -53,6 +53,11 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d1dba2cc-4976-4db8-b51b-ac10c0ece14e"
+      }
     }
   }
 }
