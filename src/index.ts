@@ -194,3 +194,72 @@ export type {
 // Companion WebSocket
 export { CompanionWebSocketHandler } from './dashboard/companion-ws.js';
 export type { CompanionWSConfig, CompanionWSEvents } from './dashboard/companion-ws.js';
+
+// Context Chain Engine (Feature #10: The Power Move)
+export {
+  ContextChainEngine,
+  BUILT_IN_CHAINS,
+  SALES_MEETING_CHAIN,
+  SHOPPING_TRIP_CHAIN,
+  PROPERTY_WALKTHROUGH_CHAIN,
+  TRAVEL_EXPLORER_CHAIN,
+  CONFERENCE_NETWORKING_CHAIN,
+  DEFAULT_CHAIN_CONFIG,
+} from './chains/context-chain-engine.js';
+export type {
+  ChainDefinition,
+  ChainPhase,
+  ChainAction,
+  ChainTrigger,
+  ChainTriggerType,
+  ChainInstance,
+  ChainInstanceStatus,
+  ChainAgentHandler,
+  ChainExecutionContext,
+  ChainEngineConfig,
+  ChainEngineEvents,
+  ChainEngineStats,
+  ActionResult,
+  ActionExecution,
+  ActionDelivery,
+  PhaseExecution,
+  PhaseTiming,
+  DeliveryRule as ChainDeliveryRule,
+} from './chains/context-chain-engine.js';
+
+// Notification Engine
+export {
+  NotificationEngine,
+  PRIORITY_VALUES,
+  DEFAULT_NOTIFICATION_CONFIG,
+} from './notifications/notification-engine.js';
+export type {
+  Notification,
+  DeliveredNotification,
+  NotificationPriority,
+  NotificationCategory,
+  NotificationEngineConfig,
+  NotificationEngineEvents,
+  NotificationEngineStats,
+  DeliveryChannel,
+  DeliveryRule,
+  UserContext,
+} from './notifications/notification-engine.js';
+
+// Analytics Engine
+export {
+  AnalyticsEngine,
+  DEFAULT_ANALYTICS_CONFIG,
+} from './analytics/analytics-engine.js';
+export type {
+  AnalyticsEvent,
+  AnalyticsEventCategory,
+  AnalyticsEngineConfig,
+  AnalyticsEngineEvents,
+  AnalyticsDashboard,
+  AggregatedMetric,
+  AgentMetrics,
+  SessionMetrics,
+  ValueMetrics,
+  TimeBucket,
+} from './analytics/analytics-engine.js';
