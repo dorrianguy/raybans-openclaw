@@ -163,6 +163,15 @@ export function useAgents() {
       console.warn('[useAgents] Backend WS connect failed:', err.message);
     });
 
+    // Auto-start voice pipeline after glasses have time to connect
+    // Enables "Hey Siberius" wake word detection immediately on app open
+    setTimeout(() => {
+      const voice = getVoiceService();
+      voice.start().catch((err: Error) => {
+        console.warn('[useAgents] Voice auto-start failed (mic permission may be needed):', err.message);
+      });
+    }, 3000);
+
     // Load agent list from backend
     backend.getAgents().then(({ agents }) => {
       if (agents?.length > 0) {
