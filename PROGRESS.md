@@ -4,6 +4,25 @@ _Updated by Night Shift agent + daytime development._
 
 ---
 
+## 2026-03-10 — Night Shift #24 (Search Engine + Export Pipeline + Alert Rules)
+
+### What Was Built
+1. **Search & Indexing Engine** (`src/search/search-engine.ts`) — 78 tests
+   - Full-text search across 10 collections with TF-IDF scoring, boolean operators (AND/OR/NOT/PHRASE/PREFIX/NEAR), faceted search, saved searches, suggestions, search history, voice summaries
+
+2. **Export Pipeline Engine** (`src/exports/export-pipeline.ts`) — 74 tests
+   - 7 output formats (CSV/TSV/JSON/JSONL/Markdown/HTML/XML), 6 built-in templates, scheduled exports, branding, concurrent job management, data transformation pipeline
+
+3. **Alert Rules Engine** (`src/alerts/alert-rules.ts`) — 74 tests
+   - 12 condition types (threshold/change/absence/pattern/frequency/anomaly/comparison/time_window/geo_fence/composite/custom), 8 action types, 8 built-in templates, cooldowns, escalation chains, alert lifecycle
+
+### Revenue Ideas (#101-106) — 106 TOTAL
+- Pharmacy Compounding QC, Museum Exhibit Designer, Tree Surgeon/Arborist, Vintage Vinyl Scanner, Home Energy Auditor, Ship Hull Inspector
+
+### Stats: 226 new tests (2,533 total) | ~6,332 lines | 106 revenue ideas | PR #10
+
+---
+
 ## 2026-02-22 — Night Shift #12 (Security Agent + Meeting Intelligence + Inspection Agent)
 
 ### What Was Built

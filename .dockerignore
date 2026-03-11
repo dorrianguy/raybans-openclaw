@@ -1,0 +1,17 @@
+node_modules
+dist
+.git
+.gitignore
+*.md
+!README.md
+.env
+.env.*
+!.env.example
+*.test.ts
+coverage
+.vscode
+.idea
+data/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
