@@ -263,3 +263,95 @@ export type {
   ValueMetrics,
   TimeBucket,
 } from './analytics/analytics-engine.js';
+
+// Billing Engine (Stripe integration)
+export {
+  BillingEngine,
+  PLAN_DEFINITIONS,
+  DEFAULT_BILLING_CONFIG,
+} from './billing/billing-engine.js';
+export type {
+  PlanId,
+  BillingInterval,
+  SubscriptionStatus,
+  PlanDefinition,
+  PlanEntitlements,
+  Customer,
+  UsageRecord,
+  Invoice,
+  InvoiceLineItem,
+  InvoiceStatus,
+  PaymentMethod,
+  CheckoutSession,
+  PortalSession,
+  WebhookEvent,
+  WebhookEventType,
+  BillingEngineConfig,
+  BillingEngineEvents,
+  BillingStats,
+  PlanComparison,
+  PricingDisplayItem,
+} from './billing/billing-engine.js';
+
+// Store Layout Mapper
+export {
+  StoreLayoutMapper,
+  DEFAULT_LAYOUT_CONFIG,
+} from './inventory/store-layout.js';
+export type {
+  StoreLayout,
+  Zone,
+  ZoneType,
+  Section,
+  Waypoint,
+  CoverageStatus,
+  MovementDirection,
+  GeoPoint as LayoutGeoPoint,
+  StoreLayoutConfig,
+  StoreLayoutEvents,
+  LayoutComparison,
+  HeatmapCell,
+  RouteRecommendation,
+} from './inventory/store-layout.js';
+
+// Marketing / Landing Page Data
+export {
+  generateLandingPageData,
+  generateSEOMetadata,
+  generateHeroSection,
+  generateFeatureSection,
+  generateHowItWorksSection,
+  generatePricingSection,
+  generateComparisonSection,
+  generateTestimonialSection,
+  generateROICalculatorSection,
+  generateFAQSection,
+  generateCTASection,
+  generateFooterSection,
+  calculateROI,
+} from './marketing/landing-page-data.js';
+export type {
+  LandingPageData,
+  SEOMetadata,
+  HeroSection,
+  HeroStat,
+  CTAButton,
+  FeatureSection,
+  Feature,
+  HowItWorksSection,
+  HowItWorksStep,
+  PricingSection,
+  PricingPlan,
+  ComparisonSection,
+  CompetitorRow,
+  ComparisonFeature,
+  TestimonialSection,
+  Testimonial,
+  CompanyLogo,
+  ROICalculatorSection,
+  ROIInput,
+  FAQSection,
+  FAQ,
+  CTASection,
+  FooterSection,
+} from './marketing/landing-page-data.js';
