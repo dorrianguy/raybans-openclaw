@@ -4,6 +4,60 @@ _Updated by Night Shift agent + daytime development._
 
 ---
 
+## 2026-03-16 — Night Shift #26 (Plugin SDK + Webhook Delivery + Multi-Tenant Manager)
+
+### What Was Built
+
+#### 1. Plugin SDK & Agent Registry (`src/sdk/plugin-sdk.ts`)
+- **Foundation for the Vision App Store** (Revenue Feature #13)
+- Plugin lifecycle: install → enable → process → disable → uninstall with lifecycle hooks
+- Manifest validation (id, semver version, author, permissions)
+- Trust system (reject unverified authors)
+- 14 granular plugin permissions (camera, mic, TTS, GPS, storage, network, etc.)
+- Image/voice/event dispatch with scene type filtering
+- Per-plugin isolated key-value storage with size limits
+- Resource limits: invocations/hr, CPU time, TTS/min, camera snaps/min
+- Execution timeout enforcement + auto-disable after 10 errors
+- Scoped logging with ring buffer per plugin
+- Health checks (per-plugin and fleet-wide)
+- **78 tests**
+
+#### 2. Webhook Delivery Engine (`src/webhooks/webhook-delivery.ts`)
+- Reliable webhook delivery for external integrations (Zapier, Slack, custom)
+- 25 event types across inventory, agents, billing, security, devices, plugins, system
+- HMAC-SHA256 signatures with constant-time verification
+- Exponential backoff retry with ±25% jitter
+- Dead letter queue with replay capability
+- Circuit breaker per endpoint (closed → open → half-open → closed)
+- Rate limiting per endpoint (sliding window)
+- Delivery history with full attempt logging
+- Secret rotation, custom headers, injectable HTTP client
+- **56 tests**
+
+#### 3. Multi-Tenant Manager (`src/tenants/tenant-manager.ts`)
+- Enterprise org isolation for $199-499/mo tiers
+- Organization CRUD with auto-slug generation and plan-based quotas
+- 4 plan tiers: free/solo/multi_store/enterprise with 8 quota dimensions
+- 5 hierarchical roles: owner → admin → manager → member → viewer
+- 26 fine-grained permissions across 6 domains (inventory, agents, billing, team, settings, data + webhooks, devices, reports)
+- Custom permission grants/revocations per user
+- Team invite workflow with expirable tokens
+- Ownership transfer, API key management (SHA-256 hashed)
+- Complete audit log with filtering
+- **71 tests**
+
+### Revenue Ideas Added: #107-112
+107. Pool/Spa Inspector ($10B), 108. Pallet Rack Inspector ($15B), 109. Power Washer Estimator ($2.5B), 110. Bail Bondsman / Fugitive Recovery ($14B), 111. Tree Service Inspector ($23B), 112. Carpet/Flooring Estimator ($30B)
+
+### Stats
+- **205 new tests** (project total: ~2,738)
+- **~5,200 lines** of new code
+- **112 total revenue ideas**
+- Branch: `night-shift/2026-03-16-plugin-sdk-webhooks-multitenant`
+- PR: [#11](https://github.com/dorrianguy/raybans-openclaw/pull/11)
+
+---
+
 ## 2026-02-26 — Night Shift #15 (Billing Engine + Store Layout Mapper + Landing Page Data)
 
 ### What Was Built
