@@ -4,6 +4,53 @@ _Updated by Night Shift agent + daytime development._
 
 ---
 
+## 2026-03-17 — Night Shift #27 (Privacy Engine + Feature Flags + Activation Engine)
+
+### What Was Built
+
+#### 1. Privacy Engine (`src/privacy/privacy-engine.ts`)
+- **GDPR/CCPA compliance layer** — unlocks EU market and enterprise customers
+- Consent management (12 categories, bulk consent, expiry, audit trail)
+- PII detection for 13 types with validation (Luhn for credit cards, SSN area/group/serial)
+- PII redaction with type-specific placeholders
+- 8 default data retention policies (images: 30d, voice: 7d, GPS: 90d, audit: forever)
+- Privacy zones (geofence/WiFi/Bluetooth/manual/schedule) with 8 restriction types
+- Data Subject Requests for all 6 GDPR rights (access through objection)
+- 5 anonymization techniques (suppression, hashing, pseudonymization, generalization, noise)
+- Compliance reports with scoring (0-100) and voice summaries
+- **80 tests**
+
+#### 2. Feature Flag Engine (`src/features/feature-flag-engine.ts`)
+- **Controlled rollouts and A/B testing** for safe deployment
+- 9 rollout strategies (percentage, user_list, plan, region, schedule, gradual, ring-based)
+- Rule system with priority ordering and 10 condition operators
+- Full A/B testing: experiments, variant assignment, impression/conversion tracking
+- Statistical significance (z-test with confidence levels)
+- User overrides, evaluation caching, platform flag templates
+- **77 tests**
+
+#### 3. Activation Engine (`src/onboarding/activation-engine.ts`)
+- **User onboarding and churn prevention** — the #1 SaaS revenue lever
+- 10 onboarding stages, 8-step checklist with progress tracking
+- Engagement levels (new→exploring→engaged→power_user→at_risk→churned)
+- Churn risk evaluation (low/medium/high/critical)
+- 8 built-in nudge templates with cooldown, suppression, and history
+- Trial management (expiring/expired detection, conversion tracking)
+- 9 milestones with streak tracking
+- Conversion funnel metrics and voice summaries
+- **71 tests**
+
+### Revenue Ideas Added: #113-118
+113. Parking Garage Condition Auditor ($5B), 114. Kitchen Hood Inspector ($5B), 115. Mold Remediation Documentor ($6B), 116. Locksmith Documentor ($10B), 117. Chimney Sweep Inspector ($3B), 118. Vending Machine Route Optimizer ($25B)
+
+### Stats
+- **228 new tests** (project total: ~2,966)
+- **~6,137 lines** of new code
+- **118 total revenue ideas**
+- Branch: `night-shift/2026-03-17-privacy-featureflags-onboarding`
+
+---
+
 ## 2026-02-26 — Night Shift #15 (Billing Engine + Store Layout Mapper + Landing Page Data)
 
 ### What Was Built
