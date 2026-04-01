@@ -4,6 +4,45 @@ _Updated by Night Shift agent + daytime development._
 
 ---
 
+## 2026-03-31 — Night Shift #28 (Platform Orchestrator + Demo Simulator + Voice Expansion)
+
+### What Was Built
+
+#### 1. Platform Orchestrator (`src/orchestrator/platform.ts`)
+- **The master coordinator** — single entry point to boot and manage the entire platform
+- Agent lifecycle: register, enable/disable, init, shutdown
+- Image routing by scene type with priority ordering
+- Voice command routing with platform-level commands (status, privacy, resume)
+- Session management for concurrent inventory/meeting/inspection sessions
+- Health monitoring with periodic checks and degraded/unhealthy detection
+- Voice summaries, stats tracking, event-driven architecture (20+ events)
+- **62 tests**
+
+#### 2. Demo Simulator (`src/demo/simulator.ts`)
+- **Run demos without Ray-Ban hardware** — critical for investor pitches
+- 5 built-in scenarios: Inventory Walkthrough, Conference Networking, Security Scan, Deal Analysis, Full Platform Showcase
+- 8 realistic data generators (retail shelf, person/badge, document, vehicle, property, whiteboard, kitchen, workshop)
+- Speed control (0.5x-100x), pause/resume/stop, custom scenarios
+- **72 tests**
+
+#### 3. Voice Command Expansion (`src/voice/voice-expansion.ts`)
+- 37+ new intents across 12 categories covering ALL 11+ agents
+- Command aliases, voice macros, command history, built-in help system
+- 100+ regex patterns for natural language matching
+- **63 tests**
+
+### Revenue Ideas Added: #119-124
+119. Pool & Spa Inspector ($6B), 120. Tree Arborist Risk Assessor ($25B), 121. Museum Conservator Climate Tracker ($5B), 122. Flooring Installer Estimator ($30B), 123. Scuba Dive Instructor Safety ($5B), 124. Garbage Truck Waste Inspector ($75B)
+
+### Stats
+- **197 new tests** (project total: ~3,163)
+- **~6,200 lines** of new code
+- **124 total revenue ideas**
+- Branch: `night-shift/2026-03-31-orchestrator-demo-voiceexpand`
+- PR: #13
+
+---
+
 ## 2026-02-26 — Night Shift #15 (Billing Engine + Store Layout Mapper + Landing Page Data)
 
 ### What Was Built
