@@ -4,6 +4,62 @@ _Updated by Night Shift agent + daytime development._
 
 ---
 
+## 2026-04-01 — Night Shift #29 (Agent Profiler + Multi-Session Coordinator + Data Export Hub)
+
+### What Was Built
+
+#### 1. Agent Performance Profiler (`src/profiler/agent-profiler.ts`)
+- **Production observability** — benchmark, profile, and optimize every agent
+- Latency tracking: p50, p95, p99, max, mean, min, stdDev
+- Timer API: startTimer/stopTimer + async `profile()` wrapper
+- Memory profiling: optional heap tracking per invocation
+- Cost estimation: token-based (input/output × configurable rates)
+- Regression detection: auto-alerts when performance degrades beyond baseline threshold
+- Baseline management: save/compare snapshots with per-metric deltas
+- Benchmarking: configurable warmup, iterations, concurrency, timeout
+- Pipeline profiling: multi-stage bottleneck identification
+- Rankings: getSlowest, getMostUnreliable, getMostExpensive
+- Dashboard summary + voice-friendly reports
+- Export/import for persistence
+- **66 tests**
+
+#### 2. Multi-Session Coordinator (`src/sessions/multi-session.ts`)
+- **Enterprise multi-store** — concurrent inventory sessions across locations/teams
+- Session lifecycle: create → start → pause/resume → complete/cancel
+- Priority system: critical/high/normal/low/background with weighted sorting
+- Team management: roles (lead/counter/reviewer/observer), per-member stats
+- Zone management: add/start/complete zones, recount marking, all-zones-complete detection
+- Item tracking: confidence-weighted merging, member contribution tracking
+- Session handoffs: shift transfers with optional zone-specific handoff + history
+- Cross-session analytics: find items in multiple sessions, detect discrepancies (>10% variance)
+- Aggregated progress: by store, by priority, overall completion percentages
+- Session splitting: divide large sessions by zone groups
+- Inactivity management: auto-pause, session timeout
+- **85 tests**
+
+#### 3. Data Export Hub (`src/exports/data-export-hub.ts`)
+- **Comprehensive export pipeline** — every format, every schedule
+- 6 output formats: CSV, JSON, TSV, XML, Markdown, HTML
+- 10 built-in templates (inventory, billing, audit, security, compliance, etc.)
+- Data provider registration for pluggable data sources
+- Aggregation pipeline: groupBy + sum/avg/min/max/count/distinct
+- PII redaction: auto-redact emails, phones, SSNs
+- Scheduled exports: daily/weekly/monthly with configurable hour
+- Job management with progress tracking and lifecycle events
+- **59 tests**
+
+### Revenue Ideas Added: #125-130
+125. Parking Garage Inspector ($35B), 126. Recycling Contamination Detector ($50B), 127. Movie Set Continuity ($200B), 128. Vintage Car Appraiser ($30B), 129. Greenhouse/Indoor Farm ($50B), 130. Airport Ramp Operations ($150B)
+
+### Stats
+- **210 new tests** (project total: ~3,373)
+- **~5,992 lines** of new code
+- **130 total revenue ideas**
+- Branch: `night-shift/2026-04-01-profiler-multisession-exporthub`
+- PR: #14
+
+---
+
 ## 2026-02-26 — Night Shift #15 (Billing Engine + Store Layout Mapper + Landing Page Data)
 
 ### What Was Built
