@@ -314,6 +314,55 @@ export type {
   RouteRecommendation,
 } from './inventory/store-layout.js';
 
+// Agent Performance Profiler
+export { AgentProfiler } from './profiler/agent-profiler.js';
+export type {
+  ProfilerConfig,
+  InvocationSample,
+  LatencyStats,
+  AgentProfile,
+  BenchmarkConfig,
+  BenchmarkResult,
+  RegressionAlert,
+  Baseline,
+  PipelineStage,
+  PipelineProfile,
+} from './profiler/agent-profiler.js';
+
+// Multi-Session Coordinator
+export { MultiSessionCoordinator } from './sessions/multi-session.js';
+export type {
+  SessionConfig,
+  SessionStatus,
+  SessionPriority,
+  SessionMember,
+  InventorySession as MultiInventorySession,
+  SessionZone,
+  CrossSessionItem,
+  SessionSplit,
+  AggregatedProgress,
+  HandoffRequest,
+} from './sessions/multi-session.js';
+
+// Data Export Hub
+export { DataExportHub } from './exports/data-export-hub.js';
+export type {
+  ExportConfig,
+  ExportFormat as DataExportFormat,
+  ExportDataType,
+  DeliveryMethod,
+  ExportStatus,
+  ExportRequest,
+  ExportFilters,
+  AggregationConfig,
+  DeliveryConfig,
+  ExportJob,
+  ExportTemplate,
+  ScheduledExport,
+  DataRow,
+  DataProvider,
+} from './exports/data-export-hub.js';
+
 // Marketing / Landing Page Data
 export {
   generateLandingPageData,
