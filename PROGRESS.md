@@ -4,6 +4,33 @@ _Updated by Night Shift agent + daytime development._
 
 ---
 
+## 2026-04-02 — Night Shift #30 (Event Bus + Job Queue + API Rate Limiter)
+
+### What Was Built
+
+#### 1. Event Bus (`src/events/event-bus.ts`)
+- Central pub/sub connecting all modules — wildcard subscriptions (`image:*`, `*`), priority-ordered handlers, middleware pipeline, dead letter queue, event replay, correlation tracking, pause/resume, rate limiting per channel, backpressure, metrics, voice summary
+- **67 tests**
+
+#### 2. Background Job Queue (`src/jobs/job-queue.ts`)
+- Async processing engine — priority queue (4 levels), concurrency control, retry with exponential backoff, job dependencies, groups, deduplication, scheduled jobs, TTL, timeout, progress tracking, dead letter queue, event hooks, metrics, voice summary
+- **52 tests**
+
+#### 3. API Rate Limiter (`src/ratelimit/api-rate-limiter.ts`)
+- Production-grade throttling — token bucket + sliding window, 5 plan tiers, per-endpoint overrides, cost-based limiting, concurrency limits, grace periods, IP limiting, whitelist/blacklist, rate limit headers, metrics, voice summary
+- **44 tests**
+
+### Revenue Ideas Added: #131-136
+131. Arborist / Tree Risk Assessment, 132. Elevator Pitch Coach, 133. Grocery Store Shelf Stocker, 134. Pool / Spa Inspector, 135. Coin / Collectible Grader, 136. Emergency Room Triage AI
+
+### Stats
+- **163 new tests** (project total: ~3,536)
+- **~5,800 lines** of new code
+- **136 total revenue ideas**
+- Branch: `night-shift/2026-04-02-eventbus-jobqueue-ratelimiter2`
+
+---
+
 ## 2026-02-26 — Night Shift #15 (Billing Engine + Store Layout Mapper + Landing Page Data)
 
 ### What Was Built
