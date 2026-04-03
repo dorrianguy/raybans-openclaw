@@ -275,7 +275,8 @@ export class NetworkingAgent extends EventEmitter<NetworkingAgentEvents> {
     // New contact — set up the full record
     const contact: ContactInfo = {
       ...extracted,
-      id: this.generateContactId(extracted.name),
+      name: extracted.name ?? 'Unknown',
+      id: this.generateContactId(extracted.name ?? 'Unknown'),
       context: {
         datemet: image.capturedAt,
         latitude: image.location?.latitude,

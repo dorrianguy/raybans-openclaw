@@ -794,7 +794,7 @@ export class InspectionAgent extends EventEmitter<InspectionAgentEvents> {
       estimatedTotalCost += finding.estimatedCost || 0;
     }
 
-    const overallCondition = session.overallCondition || this.assessOverallConditionFromFindings(session.findings);
+    const overallCondition = session.overallCondition ?? this.assessOverallConditionFromFindings(session.findings) ?? 'good';
     const markdownReport = this.generateMarkdownReport(session, date, duration, findingSummary, findingsBySection, overallCondition, estimatedTotalCost);
     const voiceSummary = this.generateVoiceSummary(session, duration, findingSummary, overallCondition);
 
@@ -954,7 +954,7 @@ export class InspectionAgent extends EventEmitter<InspectionAgentEvents> {
     return this.assessOverallConditionFromFindings(this.currentInspection.findings);
   }
 
-  private assessOverallConditionFromFindings(findings: InspectionFinding[]): string {
+  private assessOverallConditionFromFindings(findings: InspectionFinding[]): InspectionSection['condition'] {
     const critical = findings.filter(f => f.severity === 'critical').length;
     const major = findings.filter(f => f.severity === 'major').length;
     const minor = findings.filter(f => f.severity === 'minor').length;
