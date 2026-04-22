@@ -4,6 +4,49 @@ _Updated by Night Shift agent + daytime development._
 
 ---
 
+## 2026-04-21 — Night Shift #31 (Session Manager + Feature Flags + Auth & API Keys)
+
+### What Was Built
+
+#### 1. Session Manager (`src/sessions/session-manager.ts`)
+- Multi-device session coordination — glasses, phone, dashboard, API simultaneously
+- Session lifecycle: create → active → paused → resumed → completed/expired/cancelled
+- Device management with heartbeat tracking and auto-timeout
+- 6 device types, 10 session types, configurable limits per user
+- Tags, notes, metadata, agent tracking, stats per session
+- Query engine with filtering, pagination, sorting
+- Voice-friendly TTS summaries + global stats aggregation
+- **98 tests**
+
+#### 2. Feature Flag System (`src/flags/feature-flags.ts`)
+- Dynamic feature control for gradual rollouts and plan gating
+- Plan-gated flags, percentage rollout, user overrides, time windows
+- Flag dependencies with cascading disable
+- A/B testing variants with deterministic weighted assignment
+- 16 built-in platform flags with plan gating
+- Evaluation audit trail with per-flag stats
+- **74 tests**
+
+#### 3. Auth & API Key Manager (`src/auth/auth-manager.ts`)
+- API key generation with environment prefixes (rv_prod_, rv_dev_, rv_stg_)
+- SHA-256 key hashing, 15 scoped permissions, plan-based scope templates
+- Per-key rate limiting, key rotation with grace periods, IP whitelists
+- Session token management for dashboard login
+- Usage tracking and analytics per key
+- **52 tests**
+
+### Revenue Ideas Added: #137-142
+137. Plumbing Leak Detection Survey, 138. Food Truck Health Inspector, 139. Aviation Pre-Flight Walk-Around, 140. Archaeological Survey, 141. Bail Bondsman Skip Tracing, 142. EV Charging Station Inspector
+
+### Stats
+- **224 new tests** (project total: ~3,760)
+- **~5,239 lines** of new code
+- **142 total revenue ideas**
+- Branch: `night-shift/2026-04-21-session-featureflags-auth`
+- PR: #16
+
+---
+
 ## 2026-02-26 — Night Shift #15 (Billing Engine + Store Layout Mapper + Landing Page Data)
 
 ### What Was Built
