@@ -80,18 +80,26 @@ export interface RoutingContext {
 export interface AgentResponse {
   /** Agent that produced this response */
   agentId: string;
+  /** Human-readable agent name */
+  agentName?: string;
   /** Whether the agent successfully handled the image */
-  handled: boolean;
+  handled?: boolean;
+  /** Whether the operation succeeded */
+  success?: boolean;
   /** Voice response for TTS (keep under 30s) */
   voiceResponse?: string;
+  /** TTS text (alias for voiceResponse) */
+  ttsText?: string;
   /** Structured data output */
-  data?: Record<string, unknown>;
+  data?: unknown;
+  /** Human-readable summary */
+  summary?: string;
   /** Confidence that this agent was the right choice (0-1) */
-  confidence: number;
+  confidence?: number;
   /** Priority of the response (for ordering when multiple agents respond) */
   priority: number;
   /** Processing time in ms */
-  processingTimeMs: number;
+  processingTimeMs?: number;
 }
 
 /**
@@ -682,7 +690,7 @@ export class ContextRouter extends EventEmitter<ContextRouterEvents> {
     // Sort by priority (lower = higher priority), then by confidence
     responses.sort((a, b) => {
       if (a.priority !== b.priority) return a.priority - b.priority;
-      return b.confidence - a.confidence;
+      return (b.confidence ?? 0) - (a.confidence ?? 0);
     });
 
     return responses;
