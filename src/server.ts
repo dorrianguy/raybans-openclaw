@@ -71,6 +71,7 @@ const apiServer = new DashboardApiServer(persistence, {
   corsEnabled: true,
   authToken: AUTH_TOKEN,
   debug: NODE_ENV !== 'production',
+  rateLimiter: rateLimiter ?? undefined,
 });
 
 // Wire up server event logging

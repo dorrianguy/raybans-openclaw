@@ -649,7 +649,8 @@ export class WorkflowOrchestrator extends EventEmitter {
 
       // Execute sequential steps one at a time
       for (const step of sequentialSteps) {
-        if (execution.status === 'cancelled') break;
+        // Cancellation can arrive during the awaits above; re-read past TS's stale narrowing
+        if ((execution.status as WorkflowStatus) === 'cancelled') break;
 
         try {
           const success = await this.executeStep(step, execution, context);

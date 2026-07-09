@@ -601,7 +601,7 @@ export class HealthMonitor extends EventEmitter {
         this.emit('component:unhealthy', { name: health.name, error: errorMessage, alert });
 
         // Attempt recovery
-        if (this.config.enableRecovery && config.recover) {
+        if (this.config.enableRecovery) {
           this.attemptRecovery(state);
         }
       }

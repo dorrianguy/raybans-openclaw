@@ -200,7 +200,7 @@ export class CameraCaptureService {
 
   /** Capture a single frame on demand */
   async captureSingle(
-    trigger: 'manual' | 'voice' | 'gesture' = 'manual',
+    trigger: 'auto' | 'manual' | 'voice' | 'gesture' = 'manual',
     voiceAnnotation?: string,
   ): Promise<BufferedFrame | null> {
     if (!this.glasses.isConnected) return null;

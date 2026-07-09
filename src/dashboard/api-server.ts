@@ -40,6 +40,10 @@ export interface DashboardApiConfig {
   authToken?: string;
   /** Enable debug logging */
   debug?: boolean;
+  /** Optional per-IP rate limiter applied to every HTTP request */
+  rateLimiter?: {
+    check(ip: string): { allowed: boolean; remaining: number; resetAt: number };
+  };
 }
 
 const DEFAULT_CONFIG: Partial<DashboardApiConfig> = {
@@ -95,6 +99,21 @@ export class DashboardApiServer extends EventEmitter<DashboardApiEvents> {
     this.config = { ...DEFAULT_CONFIG, ...config } as Required<DashboardApiConfig>;
     this.persistence = persistence;
     this.companionWs = new CompanionWebSocketHandler({ debug: config.debug });
+
+    // Relay companion activity onto the SSE stream (/api/events) so external
+    // listeners (dashboard, Claude Code bridge) see voice commands and frames live.
+    this.companionWs.on('companion:voice', (text, clientId) => {
+      this.broadcast({ type: 'companion:voice', text, clientId, timestamp: new Date().toISOString() });
+    });
+    this.companionWs.on('companion:frame', (frameId, clientId) => {
+      this.broadcast({ type: 'companion:frame', frameId, clientId, timestamp: new Date().toISOString() });
+    });
+    this.companionWs.on('companion:connected', (clientId) => {
+      this.broadcast({ type: 'companion:connected', clientId, timestamp: new Date().toISOString() });
+    });
+    this.companionWs.on('companion:disconnected', (clientId) => {
+      this.broadcast({ type: 'companion:disconnected', clientId, timestamp: new Date().toISOString() });
+    });
   }
 
   /**
@@ -130,6 +149,15 @@ export class DashboardApiServer extends EventEmitter<DashboardApiEvents> {
       this.server.on('upgrade', (req, socket, head) => {
         const url = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`);
         if (url.pathname === '/api/companion') {
+          if (this.config.authToken) {
+            const headerOk = req.headers.authorization === `Bearer ${this.config.authToken}`;
+            const queryOk = url.searchParams.get('token') === this.config.authToken;
+            if (!headerOk && !queryOk) {
+              socket.write('HTTP/1.1 401 Unauthorized\r\nConnection: close\r\n\r\n');
+              socket.destroy();
+              return;
+            }
+          }
           wss.handleUpgrade(req, socket as any, head, (ws) => {
             this.companionWs.registerClient(ws);
           });
@@ -249,8 +277,22 @@ export class DashboardApiServer extends EventEmitter<DashboardApiEvents> {
       }
     }
 
-    // Auth check
-    if (this.config.authToken) {
+    // Rate limiting (per client IP, respecting Render's proxy header)
+    if (this.config.rateLimiter) {
+      const forwarded = req.headers['x-forwarded-for'];
+      const ip = (typeof forwarded === 'string' ? forwarded.split(',')[0].trim() : '')
+        || req.socket.remoteAddress || 'unknown';
+      const result = this.config.rateLimiter.check(ip);
+      res.setHeader('X-RateLimit-Remaining', String(result.remaining));
+      if (!result.allowed) {
+        res.setHeader('Retry-After', String(Math.ceil((result.resetAt - Date.now()) / 1000)));
+        this.sendError(res, 429, 'Too many requests');
+        return;
+      }
+    }
+
+    // Auth check (health stays open for Docker/Render checks and wake-up pings)
+    if (this.config.authToken && pathname !== '/api/health') {
       const auth = req.headers.authorization;
       if (auth !== `Bearer ${this.config.authToken}`) {
         this.sendError(res, 401, 'Unauthorized');
@@ -294,6 +336,8 @@ export class DashboardApiServer extends EventEmitter<DashboardApiEvents> {
         await this.handleSetAgentEnabled(req, res, agentId);
       } else if (pathname === '/api/routing/stats' && method === 'GET') {
         await this.handleRoutingStats(req, res);
+      } else if (pathname === '/api/companion/say' && method === 'POST') {
+        await this.handleCompanionSay(req, res);
       } else {
         this.sendError(res, 404, `Not found: ${pathname}`);
       }
@@ -618,6 +662,46 @@ export class DashboardApiServer extends EventEmitter<DashboardApiEvents> {
     }
 
     this.sendJson(res, this.contextRouter.getStats());
+  }
+
+  /**
+   * Push a spoken/text response to all connected companion apps.
+   * Used by external agents (e.g. Claude Code via the SSE bridge) to answer
+   * voice commands heard on /api/events.
+   */
+  private async handleCompanionSay(
+    req: http.IncomingMessage,
+    res: http.ServerResponse,
+  ): Promise<void> {
+    const body = await this.readBody(req);
+    let text: unknown;
+    let agentName: unknown;
+    try {
+      ({ text, agentName } = JSON.parse(body));
+    } catch {
+      this.sendError(res, 400, 'Invalid JSON body');
+      return;
+    }
+
+    if (typeof text !== 'string' || !text.trim()) {
+      this.sendError(res, 400, 'Body must include non-empty "text" string');
+      return;
+    }
+
+    this.companionWs.broadcastToCompanions({
+      type: 'agent_response',
+      response: {
+        agentId: 'claude-code',
+        agentName: typeof agentName === 'string' && agentName ? agentName : 'Claude',
+        handled: true,
+        success: true,
+        priority: 5,
+        voiceResponse: text,
+        summary: text,
+      },
+    });
+
+    this.sendJson(res, { ok: true, deliveredTo: this.companionWs.connectedCount });
   }
 
   private async readBody(req: http.IncomingMessage): Promise<string> {

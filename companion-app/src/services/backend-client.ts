@@ -18,6 +18,7 @@ import {
   DEFAULT_WS_URL,
   API_TIMEOUT_MS,
   WS_RECONNECT_DELAY_MS,
+  WS_RECONNECT_MAX_DELAY_MS,
   WS_MAX_RECONNECT_ATTEMPTS,
   WS_HEARTBEAT_INTERVAL_MS,
 } from '../utils/constants';
@@ -190,15 +191,14 @@ export class BackendClientService {
   async connectWs(): Promise<void> {
     if (this.ws && this.wsConnected) return;
 
-    const wsUrl = `${this.config.wsUrl}/api/companion`;
+    // Token goes in the query string — React Native's WebSocket can't set
+    // an Authorization header, and the server accepts ?token= at upgrade.
+    const wsUrl = this.config.authToken
+      ? `${this.config.wsUrl}/api/companion?token=${encodeURIComponent(this.config.authToken)}`
+      : `${this.config.wsUrl}/api/companion`;
 
     return new Promise((resolve, reject) => {
       try {
-        const headers: Record<string, string> = {};
-        if (this.config.authToken) {
-          headers.Authorization = `Bearer ${this.config.authToken}`;
-        }
-
         this.ws = new WebSocket(wsUrl);
 
         this.ws.onopen = () => {
@@ -443,18 +443,31 @@ export class BackendClientService {
     }
 
     this.reconnectAttempts++;
-    const delay = WS_RECONNECT_DELAY_MS * Math.pow(1.5, this.reconnectAttempts - 1);
+    const delay = Math.min(
+      WS_RECONNECT_DELAY_MS * Math.pow(1.5, this.reconnectAttempts - 1),
+      WS_RECONNECT_MAX_DELAY_MS,
+    );
 
     console.log(
       `[BackendClient] Reconnecting in ${delay}ms ` +
       `(attempt ${this.reconnectAttempts}/${this.config.maxReconnectAttempts})`,
     );
 
+    // Render free tier spins down when idle; a plain HTTPS hit starts the
+    // instance booting (~50s) while the capped WS retries keep knocking.
+    this.wakeBackend();
+
     this.reconnectTimer = setTimeout(() => {
       this.connectWs().catch((err) => {
         console.error('[BackendClient] Reconnect failed:', err);
       });
     }, delay);
+  }
+
+  private wakeBackend(): void {
+    fetch(`${this.config.baseUrl}/api/health`).catch(() => {
+      // Wake-up ping only — failure just means the instance is still booting.
+    });
   }
 
   private clearReconnectTimer(): void {
