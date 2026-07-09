@@ -25,6 +25,10 @@ jobs:
         working-directory: companion-app
         run: npm ci
 
+      - name: Typecheck
+        working-directory: companion-app
+        run: npx tsc --noEmit
+
       - name: Fix ESM package plugin issues for Node 18
         working-directory: companion-app
         run: |

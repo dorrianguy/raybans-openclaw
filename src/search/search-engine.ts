@@ -560,11 +560,12 @@ export class SearchEngine extends EventEmitter {
     if (operator === 'AND') {
       let result: Set<string> | null = null;
       for (const term of terms) {
-        const termDocs = this.invertedIndex.get(term) ?? new Set();
+        const termDocs = this.invertedIndex.get(term) ?? new Set<string>();
         if (result === null) {
           result = new Set(termDocs);
         } else {
-          result = new Set([...result].filter(id => termDocs.has(id)));
+          const previous: string[] = Array.from(result);
+          result = new Set(previous.filter(id => termDocs.has(id)));
         }
       }
       return result ?? new Set();
@@ -573,7 +574,7 @@ export class SearchEngine extends EventEmitter {
     if (operator === 'OR') {
       const result = new Set<string>();
       for (const term of terms) {
-        const termDocs = this.invertedIndex.get(term) ?? new Set();
+        const termDocs = this.invertedIndex.get(term) ?? new Set<string>();
         for (const id of termDocs) {
           result.add(id);
         }
@@ -686,7 +687,7 @@ export class SearchEngine extends EventEmitter {
 
       for (const filter of filters) {
         const value = (doc.metadata as Record<string, unknown>)[filter.field] ??
-          (doc as Record<string, unknown>)[filter.field];
+          (doc as unknown as Record<string, unknown>)[filter.field];
 
         if (!this.matchesFilter(value, filter)) {
           matches = false;

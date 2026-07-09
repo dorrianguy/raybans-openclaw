@@ -224,7 +224,6 @@ export type {
   ActionDelivery,
   PhaseExecution,
   PhaseTiming,
-  DeliveryRule as ChainDeliveryRule,
 } from './chains/context-chain-engine.js';
 
 // Notification Engine

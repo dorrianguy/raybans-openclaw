@@ -227,8 +227,9 @@ class DeepgramStreamingClient {
   }
 
   private handleMessage(data: DeepgramResponse): void {
-    if (data.type === 'Results' && data.channel?.alternatives?.length > 0) {
-      const alt = data.channel.alternatives[0];
+    const alternatives = data.channel?.alternatives;
+    if (data.type === 'Results' && alternatives && alternatives.length > 0) {
+      const alt = alternatives[0];
       const result: TranscriptionResult = {
         text: alt.transcript || '',
         confidence: alt.confidence || 0,

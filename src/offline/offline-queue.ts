@@ -355,7 +355,9 @@ export class OfflineQueue extends EventEmitter {
         // Get next batch of processable operations
         batch = this.getNextBatch();
         if (batch.length === 0) break;
-        if (this.connectivity === 'offline') break;
+        // Re-read via the getter: awaited work above may have flipped connectivity,
+        // and TS keeps the stale narrowing from the guard at the top of the method.
+        if (this.getConnectivity() === 'offline') break;
 
         // Process batch
         await Promise.all(batch.map(op => this.processOperation(op)));

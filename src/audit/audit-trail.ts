@@ -598,8 +598,9 @@ export class AuditTrail extends EventEmitter {
     let events = options.query ? this.query(options.query) : [...this.events];
 
     // Apply redaction
-    if (options.redaction && options.redaction !== 'none') {
-      events = events.map(e => this.redactEvent(e, options.redaction!));
+    const redaction = options.redaction;
+    if (redaction && redaction !== 'none') {
+      events = events.map(e => this.redactEvent(e, redaction));
     }
 
     // Strip hashes if not requested

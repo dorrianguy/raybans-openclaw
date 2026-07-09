@@ -6,11 +6,11 @@
 
 export const DEFAULT_BACKEND_URL = 'https://raybans-openclaw.onrender.com';
 export const DEFAULT_WS_URL = 'wss://raybans-openclaw.onrender.com';
-export const DEFAULT_BACKEND_URL = 'https://raybans-openclaw-production.up.railway.app';
-export const DEFAULT_WS_URL = 'wss://raybans-openclaw-production.up.railway.app';
 export const API_TIMEOUT_MS = 15_000;
 export const WS_RECONNECT_DELAY_MS = 3_000;
-export const WS_MAX_RECONNECT_ATTEMPTS = 10;
+/** Cap backoff so retries keep knocking through Render's ~50s cold start */
+export const WS_RECONNECT_MAX_DELAY_MS = 15_000;
+export const WS_MAX_RECONNECT_ATTEMPTS = 20;
 export const WS_HEARTBEAT_INTERVAL_MS = 30_000;
 
 // ─── BLE / Glasses ──────────────────────────────────────────────

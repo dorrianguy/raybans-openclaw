@@ -126,7 +126,7 @@ const defaultState: SettingsState = {
   adaptiveQuality: true,
   wakeWord: DEFAULT_WAKE_WORD,
   wakeWordEnabled: true,
-  deepgramApiKey: '8447c4e3ab42ba417fd79d7f1eed9ef053ee21e5',
+  deepgramApiKey: '',
   voiceLanguage: 'en-US',
   ttsProvider: 'cartesia',
   cartesiaApiKey: '',
@@ -149,6 +149,10 @@ function loadPersistedState(): Partial<SettingsState> {
       // Migration: if API keys are empty in storage, let the default fill them in
       if (!persisted.deepgramApiKey) delete persisted.deepgramApiKey;
       if (!persisted.cartesiaApiKey) delete persisted.cartesiaApiKey;
+      // Migration: purge the revoked key that used to ship as a baked-in default
+      if (persisted.deepgramApiKey === '8447c4e3ab42ba417fd79d7f1eed9ef053ee21e5') {
+        delete persisted.deepgramApiKey;
+      }
       return persisted;
     }
   } catch {
