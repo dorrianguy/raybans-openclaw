@@ -4,6 +4,209 @@ _Updated by Night Shift agent + daytime development._
 
 ---
 
+## 2026-08-23 — Night Shift #33 (Geofence Engine + Compliance Engine + Multi-Tenant System)
+
+### What Was Built
+
+#### 1. Geofence Engine (`src/geofence/geofence-engine.ts`)
+- **Location-aware agent activation** — auto-trigger agents when entering/exiting geographic zones
+- **Two fence shapes:** Circle (center + radius) and Polygon (arbitrary vertices with ray-casting)
+- **Three event types:** Enter, Exit, Dwell (configurable dwell time threshold)
+- **GPS Processing:**
+  - Rolling-average smoothing to prevent jitter-triggered events
+  - Accuracy filtering (ignore low-quality readings)
+  - Breadcrumb trail with fence association
+  - Speed and heading tracking
+- **Schedule-aware fences:** Active only during configured time windows (e.g., business hours M-F)
+- **7 Built-in Templates:** retail_store, warehouse, office, client_site, competitor_store, event_venue, airport
+  - Each template has pre-configured radius, dwell time, and agent rules
+- **Fence Groups:** Organize locations (e.g., "All NYC Stores", "Competitors")
+- **Agent Rules:** Per-fence enter/exit/dwell agent activation with voice announcements
+- **Cooldown System:** Prevents rapid re-entry event spam
+- **Proximity Queries:** Nearest fences, distance to fence boundary
+- **Statistics:** Enter/exit counts, average dwell time, longest dwell per fence
+- **Import/Export:** Serialize fences for backup/sharing
+- **Voice Summary:** "Currently inside Downtown Store. Been here for 12 minutes."
+- **87 tests**
+
+#### 2. Compliance & Privacy Engine (`src/privacy/compliance-engine.ts`)
+- **GDPR/CCPA/HIPAA consent management** — the enterprise sales enabler
+- **Consent Lifecycle:**
+  - Grant, deny, withdraw with full audit trail
+  - 13 consent purposes (image_capture, face_recognition, location_tracking, voice_recording, analytics, marketing, third_party_sharing, cloud_processing, local_processing, data_training, product_identification, medical_data, biometric_data)
+  - Expiration tracking with auto-detection
+  - Batch consent for onboarding flows
+  - Version tracking for re-consent
+- **PII Detection Engine:**
+  - 8 PII types with regex patterns: email, phone, SSN, credit card, IP address, date of birth, API keys, GPS coordinates
+  - Smart validation: SSN structure rules, Luhn check for credit cards, IP range validation
+  - Confidence scoring per detection type
+  - Context extraction (surrounding text for review)
+  - Overlap removal for clean detections
+- **5 Redaction Strategies:**
+  - Mask: `j***@example.com`, `***-**-6789` (format-preserving)
+  - Hash: `[HASH:a1b2c3d4]`
+  - Remove: `[API_KEY_REDACTED]`
+  - Tokenize: `[TOKEN:tok_abc123]`
+  - Generalize: `[email address]`, `[phone number]`
+- **Data Retention Policies:** Configurable per data type with auto-cleanup
+- **Right to Erasure (GDPR Art. 17):** Deletion request lifecycle (pending → processing → completed)
+- **Data Portability (GDPR Art. 20):** Export request with format selection (JSON/CSV/XML)
+- **Privacy Impact Assessment:** Scoring across data minimization, consent coverage, retention compliance, encryption, access control
+- **Data Classification:** 4 levels (public/internal/confidential/restricted) per data type
+- **Voice Summary:** "Privacy status: 5 consents active, 2 denied. Warning: 1 consent expired."
+- **96 tests**
+
+#### 3. Multi-Tenant Isolation System (`src/tenants/tenant-manager.ts`)
+- **Full tenant lifecycle** — create, update, suspend, reactivate, delete
+- **5 Plan Tiers with Limits:**
+  | Plan | Users | Stores | Sessions/mo | API/day | Storage | Rate/min |
+  |------|-------|--------|-------------|---------|---------|----------|
+  | Free | 1 | 1 | 5 | 100 | 100MB | 10 |
+  | Solo | 1 | 3 | 50 | 1K | 1GB | 30 |
+  | Team | 10 | 10 | 200 | 5K | 10GB | 60 |
+  | Enterprise | 500 | 100 | 10K | 100K | 100GB | 300 |
+  | Reseller | 1K | 500 | 50K | 500K | 500GB | 600 |
+- **RBAC (Role-Based Access Control):**
+  - 5 roles: owner, admin, manager, member, viewer
+  - 14 permissions (tenant:manage, members:invite, sessions:create, api:manage, audit:view, etc.)
+  - Strict permission hierarchy (owner > admin > manager > member > viewer)
+- **Member Management:**
+  - Add/remove with plan-based limits
+  - Role changes with audit logging
+  - Can't remove/demote the owner
+- **Invitation System:**
+  - Email-based invitations with expiration
+  - Accept/revoke lifecycle
+  - Auto-add member on acceptance
+- **Usage Tracking:**
+  - 8 tracked metrics (images, agent invocations, voice commands, API calls, storage, active users, sessions, last activity)
+  - Limit warnings at 80% utilization
+  - Limit exceeded events at 100%
+  - Monthly usage reset
+- **Per-Tenant Feature Flags:**
+  - Plan-based default features (free gets 3, enterprise gets 13)
+  - Runtime enable/disable per tenant
+- **Tenant Hierarchy:**
+  - Parent/child relationships for reseller model
+  - Child tenant listing, parent lookup
+  - Cascade protection (can't delete parent with children)
+- **Data Isolation:**
+  - `validateTenantAccess()` guard — checks membership + status
+  - Namespace generation for data scoping
+  - Blocks access to suspended/deactivated tenants
+- **Audit Logging:** Every action logged with tenant, user, action, resource, details, timestamp
+- **Voice Summary:** "Acme Corp: active on team plan. 5 team members. 120 sessions this month. Trial expires in 8 days."
+- **73 tests**
+
+#### 4. Revenue Brainstorming — 6 New Ideas
+- **#149 Ship Hull Inspector** — "Dive-Free Below-the-Waterline Assessment" ($199-9,999/mo, $30B ship maintenance + $100B fuel costs). Hull fouling detection, corrosion mapping, classification society reports. Lloyd's Register partnership = 13K+ vessels.
+- **#150 Wind Turbine Blade Inspector** — "Every Blade, Every Crack, Zero Rope Access" ($149-4,999/mo, $20B wind O&M + $10B blade repair). Leading edge erosion staging, lightning damage, crack growth tracking. Vestas/Siemens/GE service contracts.
+- **#151 Grocery Store Shelf Reset Verifier** — "Planogram Perfect, Every Aisle" ($49-2,999/mo, $20B merchandising + $200B CPG trade spending). Real-time planogram compliance checking, discrepancy detection, corrective action lists. P&G contract = $10M+.
+- **#152 Electrical Substation Inspector** — "Walk-Through Compliance in 30 Minutes" ($199-9,999/mo, $250B T&D + $15B substation maintenance). Transformer readings, relay settings, NERC-compliant reports. Grid modernization $65B federal allocation.
+- **#153 Museum Collection Inventory Manager** — "Every Object Accounted For" ($49-999/mo, $21B museums + $5B art storage). Accession number OCR, object identification, condition photos, location verification. Smithsonian pilot = $500K+.
+- **#154 Underground Mining Safety Scout** — "See What the Headlamp Misses" ($99-4,999/mo, $100B mining + $5B safety equipment). Roof condition, bolt pattern, gas readings, MSHA 30 CFR Part 75 compliance. One prevented fatality = $7M+.
+
+### Stats
+- **6 files** (3 modules + 3 test suites)
+- **~5,875 lines of code** added
+- **256 new tests** (87 + 96 + 73), all passing
+- **6 new revenue ideas** documented with full specs
+- **154 total revenue ideas** in REVENUE-FEATURES.md
+- **PR #18 created:** https://github.com/dorrianguy/raybans-openclaw/pull/18
+
+### Architecture After Tonight
+```
+src/
+├── types.ts                              # 30+ shared interfaces & types
+├── index.ts                              # Public API exports
+├── vision/vision-pipeline.ts             # Image → structured analysis
+├── inventory/                            # Inventory management
+│   ├── inventory-state.ts                # Running inventory state
+│   ├── product-database.ts               # UPC lookup + caching
+│   ├── export-service.ts                 # CSV/JSON/report generation
+│   └── store-layout.ts                   # Store layout mapping
+├── voice/                                # Voice interface
+│   ├── voice-command-router.ts           # Voice command parsing
+│   └── voice-pipeline.ts                 # Voice processing pipeline
+├── bridge/                               # Hardware integration
+│   ├── node-bridge.ts                    # OpenClaw node integration
+│   └── image-scheduler.ts               # Smart auto-capture
+├── storage/persistence.ts                # SQLite persistence layer
+├── routing/context-router.ts             # Intelligent image routing
+├── chains/context-chain-engine.ts        # Multi-agent workflows
+├── notifications/                        # Notification system
+│   ├── notification-engine.ts            # Smart notification routing
+│   └── notification-router.ts            # Notification routing rules
+├── analytics/analytics-engine.ts         # Usage tracking + metrics
+├── billing/                              # Payment infrastructure
+│   ├── billing-engine.ts                 # Subscription management
+│   └── stripe-integration.ts             # Stripe lifecycle
+├── marketing/landing-page-data.ts        # Landing page content
+├── resilience/circuit-breaker.ts         # Circuit breaker pattern
+├── health/health-monitor.ts              # System health tracking
+├── sync/device-sync.ts                   # Multi-device sync
+├── offline/offline-queue.ts              # Offline operation queue
+├── telemetry/telemetry-engine.ts         # Structured logging + metrics
+├── schema/schema-initializer.ts          # Database schema management
+├── workflows/workflow-orchestrator.ts    # DAG pipeline execution
+├── audit/audit-trail.ts                  # SHA-256 hash chain audit
+├── users/user-manager.ts                 # User management
+├── search/search-engine.ts              # Full-text search
+├── exports/export-pipeline.ts            # Advanced export system
+├── alerts/alert-rules.ts                 # Configurable alert rules
+├── gateway/api-gateway.ts                # API gateway + routing
+├── config/config-engine.ts               # Configuration management
+├── migrations/migration-engine.ts        # Database migrations
+├── pipeline/batch-processor.ts           # Batch processing pipeline
+├── comparison/store-comparison.ts        # Store comparison analytics
+├── reports/report-builder.ts             # Report generation
+├── cli/admin-cli.ts                      # Admin CLI tool
+├── plugins/plugin-registry.ts            # Plugin management
+├── ratelimit/quota-engine.ts             # Rate limiting + quotas
+├── onboarding/setup-wizard.ts            # Setup wizard
+├── streaming/streaming-pipeline.ts       # Real-time streaming
+├── nlu/nlu-engine.ts                     # Natural language understanding
+├── sdk/agent-plugin-sdk.ts               # Agent plugin SDK
+├── dashboard/                            # Dashboard
+│   ├── api-server.ts                     # REST API + SSE
+│   ├── companion-ws.ts                   # WebSocket for companion app
+│   ├── widget-system.ts                  # Dashboard widgets
+│   └── production.ts                     # Production server entry
+├── webhooks/webhook-engine.ts            # Webhook management
+├── geofence/                             # ← NEW
+│   ├── geofence-engine.ts                # Location-aware agent activation
+│   └── geofence-engine.test.ts           # 87 tests
+├── privacy/                              # ← NEW
+│   ├── compliance-engine.ts              # GDPR/CCPA consent + PII detection
+│   └── compliance-engine.test.ts         # 96 tests
+├── tenants/                              # ← NEW
+│   ├── tenant-manager.ts                 # Multi-tenant isolation
+│   └── tenant-manager.test.ts            # 73 tests
+├── agents/                               # 11 specialist agents
+│   ├── inventory-agent.ts                # Inventory orchestrator
+│   ├── memory-agent.ts                   # Perfect Memory
+│   ├── networking-agent.ts               # Badge/card scanner
+│   ├── deal-agent.ts                     # Price intelligence
+│   ├── security-agent.ts                 # Threat detection
+│   ├── meeting-agent.ts                  # Meeting intelligence
+│   ├── inspection-agent.ts               # Walkthrough reports
+│   ├── translation-agent.ts              # Multilingual + cultural
+│   ├── debug-agent.ts                    # Code debugging via vision
+│   └── context-agent.ts                  # Context-aware assistant
+└── integration/e2e-flow.test.ts          # Integration tests
+```
+
+### What's Next (Priority)
+1. **Web Dashboard UI** — React frontend (biggest remaining gap)
+2. **Landing Page Build** — React site from landing-page-data.ts
+3. **Stripe Live Integration** — Connect BillingEngine to real Stripe API
+4. **E2E Integration Tests** — Wire geofence → chain engine → agents
+5. **iOS Companion App** — Dorrian is working on this
+6. **Real hardware testing** — Test with actual Ray-Bans + OpenClaw node
+
+---
+
 ## 2026-02-26 — Night Shift #15 (Billing Engine + Store Layout Mapper + Landing Page Data)
 
 ### What Was Built
