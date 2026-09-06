@@ -1,15 +1,59 @@
-# Progress — Meta Ray-Bans × OpenClaw
+# Progress - Meta Ray-Bans × OpenClaw
 
 _Updated by Night Shift agent + daytime development._
 
 ---
 
-## 2026-02-26 — Night Shift #15 (Billing Engine + Store Layout Mapper + Landing Page Data)
+## 2026-09-05 — Night Shift #34 (Reconciliation Engine + Voice Session Controller + Webhook Manager)
+
+### What Was Built
+
+#### 1. Inventory Reconciliation Engine (`src/reconciliation/reconciliation-engine.ts`)
+- **The shrinkage detection core** — compares counts and finds where inventory disappears
+- **3 Reconciliation Modes:** Direct comparison, session snapshot diff, POS reconciliation
+- **Variance Analysis:** Per-item with percentage, direction, severity, value at cost and retail
+- **6 Shrinkage Root Cause Categories:** External theft, internal theft, admin error, expiration, damage, vendor fraud — with customizable classification rules
+- **Smart Flags:** high_severity, medium_severity, complete_stockout, high_value_loss, major_overage
+- **Breakdowns:** By category, location, and shrinkage cause with top losses
+- **Trend Analysis:** Multi-report trends (improving/worsening/stable), worst category/location
+- **Auto-Recommendations:** Theft pattern warnings, stockout alerts, recount suggestions
+- **Reports:** Full markdown with tables + voice summaries
+- **95 tests**
+
+#### 2. Voice Session Controller (`src/session/session-controller.ts`)
+- **The UX glue** — hands-free session lifecycle management
+- **Session Lifecycle:** Start → Pause → Resume → End/Cancel
+- **10 Session Modes** with auto-agent mapping (inventory, inspection, networking, etc.)
+- **7 Built-in Templates:** Quick Count, Full Store, Property Inspection, Conference, Shopping, Meeting, Security Patrol
+- **Priority Command Queue**, feedback levels (verbose/normal/minimal/silent), privacy mode
+- **Checkpoints, mode switching, agent management, auto-save, inactivity timeout, max duration**
+- **Session Handoff:** Export/import for device switching
+- **88 tests**
+
+#### 3. Webhook Manager (`src/webhooks/webhook-manager.ts`)
+- **External integration backbone** — sends events to POS, Zapier, IFTTT, custom endpoints
+- **22 Event Types** covering session, inventory, reconciliation, scans, alerts, agents, devices, billing
+- **HMAC-SHA256 Signatures**, retry with exponential backoff, per-endpoint rate limiting
+- **Health Monitoring**, auto-pause on consecutive failures, delivery history
+- **55 tests**
+
+#### 4. Revenue Brainstorming — 6 New Ideas (#173-178)
+- Moving Company Estimator, Roofing Damage Negotiator, Antique Furniture Identifier
+- HVAC Ductwork Inspector, Wildland Mushroom/Foraging Guide, Apartment Turnover Inspector
+
+### Stats
+- **238 new tests**, all passing
+- **~5,264 lines of code**
+- **6 new revenue ideas** (#173-178)
+
+---
+
+## 2026-02-26 - Night Shift #15 (Billing Engine + Store Layout Mapper + Landing Page Data)
 
 ### What Was Built
 
 #### 1. Billing Engine (`src/billing/billing-engine.ts`)
-- **Revenue infrastructure** — Stripe-powered subscription management for the entire platform
+- **Revenue infrastructure** - Stripe-powered subscription management for the entire platform
 - **5 Plan Definitions:** Free, Solo Store ($79/mo), Multi-Store ($199/mo), Enterprise ($499/mo), Pay Per Count ($0.02/item)
   - Each plan has detailed entitlements: max stores, SKUs, sessions, team members, agent features
   - Yearly billing with 17% savings
@@ -57,7 +101,7 @@ _Updated by Night Shift agent + daytime development._
 - **100 tests**
 
 #### 2. Store Layout Mapper (`src/inventory/store-layout.ts`)
-- **Spatial tracking** — Maps your store as you walk through it
+- **Spatial tracking** - Maps your store as you walk through it
 - **Zone Hierarchy:** Zones with parent-child relationships (department → aisle → section)
   - 12 zone types: entrance, checkout, department, aisle, endcap, display, backroom, cold_storage, loading_dock, office, restroom, custom
   - Configurable max zones (200) and sections per zone (50)
@@ -108,7 +152,7 @@ _Updated by Night Shift agent + daytime development._
 - **82 tests**
 
 #### 3. Landing Page Data Engine (`src/marketing/landing-page-data.ts`)
-- **Marketing-ready content** — complete landing page data structure
+- **Marketing-ready content** - complete landing page data structure
 - **SEO Metadata:** Title, description, 15 keywords, Open Graph, Twitter Card, JSON-LD structured data with AggregateOffer
 - **Hero Section:** Headline, subheadline, description, 4 stats (90% less labor, 3hrs, 10x cheaper, 95% accuracy), primary/secondary CTAs
 - **Feature Showcase:** 10 features with icons, descriptions, benefits, premium badges
@@ -125,13 +169,13 @@ _Updated by Night Shift agent + daytime development._
 - **Footer:** Categorized links (Product, Support, Company, Legal), social links, Meta trademark disclaimer
 - **59 tests**
 
-#### 4. Revenue Brainstorming — 6 New Ideas
-- **#53 Livestock Health Monitor** — "Rancher's AI Eye" ($99-1,999/mo, $80B cattle + $45B dairy). Individual animal health detection, gait analysis, herd management. Expands to horses, poultry, swine.
-- **#54 Crime Scene / Evidence Documenter** — "CSI in Glasses" ($299-2,499/mo, $18B law enforcement tech). Hands-free evidence cataloging, spatial measurement, chain-of-custody auto-logging, court-admissible reports.
-- **#55 Utility Line Inspector** — "Walk the Line Smarter" ($199-4,999/mo, $10B inspection + $100B infrastructure). Power line sag, vegetation clearance, pole condition, pipeline leak indicators. One prevented wildfire = priceless.
-- **#56 Fashion Stylist AI** — "Your Personal Shopper" ($9.99-499/mo, $350B fashion retail). Wardrobe matching, outfit suggestions, trend analysis. Affiliate revenue could exceed subscription revenue.
-- **#57 Classroom Teaching Assistant** — "Every Student, Every Moment" ($19.99-999/mo, $800B education). Student engagement monitoring, auto-attendance, fact support, IEP compliance documentation.
-- **#58 Landscaping / Lawn Care Estimator** — "Quote While You Walk" ($39-299/mo, $130B landscaping). Property measurement, tree ID, garden bed sizing, auto-generated professional quotes.
+#### 4. Revenue Brainstorming - 6 New Ideas
+- **#53 Livestock Health Monitor** - "Rancher's AI Eye" ($99-1,999/mo, $80B cattle + $45B dairy). Individual animal health detection, gait analysis, herd management. Expands to horses, poultry, swine.
+- **#54 Crime Scene / Evidence Documenter** - "CSI in Glasses" ($299-2,499/mo, $18B law enforcement tech). Hands-free evidence cataloging, spatial measurement, chain-of-custody auto-logging, court-admissible reports.
+- **#55 Utility Line Inspector** - "Walk the Line Smarter" ($199-4,999/mo, $10B inspection + $100B infrastructure). Power line sag, vegetation clearance, pole condition, pipeline leak indicators. One prevented wildfire = priceless.
+- **#56 Fashion Stylist AI** - "Your Personal Shopper" ($9.99-499/mo, $350B fashion retail). Wardrobe matching, outfit suggestions, trend analysis. Affiliate revenue could exceed subscription revenue.
+- **#57 Classroom Teaching Assistant** - "Every Student, Every Moment" ($19.99-999/mo, $800B education). Student engagement monitoring, auto-attendance, fact support, IEP compliance documentation.
+- **#58 Landscaping / Lawn Care Estimator** - "Quote While You Walk" ($39-299/mo, $130B landscaping). Property measurement, tree ID, garden bed sizing, auto-generated professional quotes.
 
 ### Stats
 - **6 files** (3 modules + 3 test suites) + updated index + revenue doc + progress
@@ -214,21 +258,21 @@ src/
 ```
 
 ### What's Next (Priority)
-1. **Web Dashboard UI** — React frontend for live inventory + billing portal
-2. **Stripe Integration** — Connect BillingEngine to real Stripe API
-3. **Landing Page** — Build React site from landing-page-data.ts
-4. **Store Layout Voice Commands** — Wire layout mapper to voice command router
-5. **iOS Companion App** — Dorrian is working on this
-6. **Real hardware testing** — Test with actual Ray-Bans + OpenClaw node
+1. **Web Dashboard UI** - React frontend for live inventory + billing portal
+2. **Stripe Integration** - Connect BillingEngine to real Stripe API
+3. **Landing Page** - Build React site from landing-page-data.ts
+4. **Store Layout Voice Commands** - Wire layout mapper to voice command router
+5. **iOS Companion App** - Dorrian is working on this
+6. **Real hardware testing** - Test with actual Ray-Bans + OpenClaw node
 
 ---
 
-## 2026-02-25 — Night Shift #14 (Context Chain Engine + Notification Engine + Analytics Engine)
+## 2026-02-25 - Night Shift #14 (Context Chain Engine + Notification Engine + Analytics Engine)
 
 ### What Was Built
 
 #### 1. Context Chain Engine (`src/chains/context-chain-engine.ts`)
-- **Feature #10 from the spec — The Power Move** — Multi-agent workflow orchestration
+- **Feature #10 from the spec - The Power Move** - Multi-agent workflow orchestration
 - **Chain Definition System:**
   - Chains are composed of Triggers → Phases → Actions
   - Each action dispatches to a registered agent handler
@@ -256,7 +300,7 @@ src/
 - **75 tests**
 
 #### 2. Notification Engine (`src/notifications/notification-engine.ts`)
-- **Smart notification routing** — only important things get spoken aloud
+- **Smart notification routing** - only important things get spoken aloud
 - **Priority Levels:** critical, high, medium, low, silent (with numeric ordering)
 - **Delivery Channels:** TTS, dashboard, silent log, haptic, phone push, sound
 - **Context-Aware Routing:**
@@ -278,7 +322,7 @@ src/
 - **67 tests**
 
 #### 3. Analytics Engine (`src/analytics/analytics-engine.ts`)
-- **Full usage tracking and performance metrics** — the business intelligence layer
+- **Full usage tracking and performance metrics** - the business intelligence layer
 - **Event Tracking:**
   - Categories: image, agent, voice, chain, inventory, notification, session, error, export, search, value
   - Each event: id, category, action, label, value, timestamp, metadata, duration, success, agentId, sessionId
@@ -301,18 +345,18 @@ src/
   - Images captured/processed, voice commands, TTS deliveries, chains executed
   - Top agent, top voice command
 - **Dashboard Overview:** Full combined view with time-bucketed filtering
-- **Time Buckets:** minute, hour, day, week, month, all — for any metric
+- **Time Buckets:** minute, hour, day, week, month, all - for any metric
 - **Milestone Detection:** Emits events at thresholds (10, 50, 100, 500, 1000...) for celebrations
 - **Aggregated Metrics:** Count, sum, average, min, max, P95, success rate per metric
 - **43 tests**
 
-#### 4. Revenue Brainstorming — 6 New Ideas
-- **#47 Chef Prep Station Monitor** — Cross-contamination detection + HACCP compliance ($79-2,999/mo, $1T food service)
-- **#48 Auto Mechanic Diagnostic** — OBD-II codes + visual inspection + parts lookup ($49-499/mo, $400B repair market)
-- **#49 Construction Progress Tracker** — Daily change detection + draw request docs ($199-4,999/mo, $2T construction)
-- **#50 Dental/Medical Procedure Assistant** — Hands-free clinical notes + auto-charting ($149-2,499/mo, $60B documentation)
-- **#51 Wine Cellar Manager** — Walk-through scanning + drink windows + valuation ($14.99-299/mo, $90B wine market)
-- **#52 Solar/Roofing Inspector** — Ground-level assessment + solar potential ($79-499/mo, $55B roofing + $25B solar)
+#### 4. Revenue Brainstorming - 6 New Ideas
+- **#47 Chef Prep Station Monitor** - Cross-contamination detection + HACCP compliance ($79-2,999/mo, $1T food service)
+- **#48 Auto Mechanic Diagnostic** - OBD-II codes + visual inspection + parts lookup ($49-499/mo, $400B repair market)
+- **#49 Construction Progress Tracker** - Daily change detection + draw request docs ($199-4,999/mo, $2T construction)
+- **#50 Dental/Medical Procedure Assistant** - Hands-free clinical notes + auto-charting ($149-2,499/mo, $60B documentation)
+- **#51 Wine Cellar Manager** - Walk-through scanning + drink windows + valuation ($14.99-299/mo, $90B wine market)
+- **#52 Solar/Roofing Inspector** - Ground-level assessment + solar potential ($79-499/mo, $55B roofing + $25B solar)
 
 ### Stats
 - **8 files** (3 modules + 3 test suites + updated index + revenue doc)
@@ -394,19 +438,19 @@ src/
 ```
 
 ### What's Next (Priority)
-1. **Web Dashboard UI** — React frontend connecting to the API server (biggest remaining gap)
-2. **Store Layout Mapping** — Aisle/section tracking with GPS correlation
-3. **Stripe Billing Integration** — Subscription management for the platform
-4. **Landing Page** — Marketing site for Inventory Vision
-5. **iOS Companion App** — Dorrian is working on this (companion-app/)
-6. **Real hardware testing** — Test with actual Ray-Bans + OpenClaw node
+1. **Web Dashboard UI** - React frontend connecting to the API server (biggest remaining gap)
+2. **Store Layout Mapping** - Aisle/section tracking with GPS correlation
+3. **Stripe Billing Integration** - Subscription management for the platform
+4. **Landing Page** - Marketing site for Inventory Vision
+5. **iOS Companion App** - Dorrian is working on this (companion-app/)
+6. **Real hardware testing** - Test with actual Ray-Bans + OpenClaw node
 
-## 2026-02-24 — Night Shift #13 (Translation Agent + Debug Agent + Context-Aware Assistant)
+## 2026-02-24 - Night Shift #13 (Translation Agent + Debug Agent + Context-Aware Assistant)
 
 ### What Was Built
 
 #### 1. Translation Agent (`src/agents/translation-agent.ts`)
-- **Your multilingual companion** — not just translation, full cultural intelligence
+- **Your multilingual companion** - not just translation, full cultural intelligence
 - **Language Detection:** 20+ languages via script analysis (CJK, Arabic, Thai, Cyrillic, Devanagari, Tamil, Telugu, Georgian, Hebrew, Greek) + pattern matching for Latin-script languages (German, French, Spanish, Italian, Portuguese, Dutch, Swedish, Polish, Turkish, Vietnamese)
 - **Cultural Briefings:** 10 countries with deep cultural data:
   - **Japan:** 7 etiquette rules, 5 useful phrases, 5 business norms, 4 taboos, tipping customs
@@ -419,7 +463,7 @@ src/
   - **Brazil:** 3 etiquette rules, 3 phrases, tipping customs
   - **India:** 5 etiquette rules, 3 phrases, tipping customs
   - **Thailand:** 5 etiquette rules, 3 phrases, tipping customs
-- **Content Classification:** Automatically detects menus, signs, documents, labels, business cards, screens — in any language
+- **Content Classification:** Automatically detects menus, signs, documents, labels, business cards, screens - in any language
 - **Menu Parser:** Extracts dish names and prices from OCR text with multiple format support
 - **Sign Guidance:** Practical plain-English guidance for exit, entrance, warning, restroom, parking, no-smoking signs
 - **Voice Summaries:** TTS-friendly output with language ID, translations, menu highlights, cultural tips
@@ -427,7 +471,7 @@ src/
 - **94 tests**
 
 #### 2. Debug Agent (`src/agents/debug-agent.ts`)
-- **Hands-free code debugging** — look at any screen and get the fix through your speaker
+- **Hands-free code debugging** - look at any screen and get the fix through your speaker
 - **Language Detection:** 17 programming languages recognized:
   - TypeScript, JavaScript, Python, Java, C#, Go, Rust, Ruby, PHP, Shell, SQL, YAML, JSON, Dockerfile, HTML, CSS, Nginx
   - Priority boosting for project languages
@@ -455,7 +499,7 @@ src/
 - **92 tests**
 
 #### 3. Context-Aware Assistant (`src/agents/context-agent.ts`)
-- **Knows what you're doing and helps without asking** — the smartest assistant
+- **Knows what you're doing and helps without asking** - the smartest assistant
 - **9 Context Types:** Kitchen, grocery store, workshop, gym, outdoor/nature, restaurant, vehicle, medical, office
 - **Context Detection:** Multi-signal scoring from objects, scene descriptions, OCR text, and vision scene types
 - **Kitchen Intelligence:**
@@ -484,17 +528,17 @@ src/
 - **Vehicle Intelligence:** Check engine light detection, tire pressure monitoring, VIN detection
 - **Medical Intelligence:** Dosage detection, safety disclaimers
 - **Task Management:** Add/remove/update tasks, track recipe steps, workout progress, shopping lists
-- **Proactiveness Levels:** Silent, conservative, helpful, proactive — configurable sensitivity
+- **Proactiveness Levels:** Silent, conservative, helpful, proactive - configurable sensitivity
 - **Voice Summaries:** Critical alerts first, then identification, then contextual info
 - **64 tests**
 
-#### 4. Revenue Brainstorming — 6 New Ideas
-- **#41 Language Tutor** — "Learn by Living" ($14.99-999/mo, $61B language learning market). Context-based learning with 300% better retention.
-- **#42 Elderly Care Monitor** — "Independent Living, Safe Living" ($19.99-199/mo, $1.7T elderly care market). Fall detection, medication reminders, Medicare reimbursable.
-- **#43 Wildlife Safari Guide** — "Your AI Naturalist" ($9.99-499/mo, $120B wildlife tourism). Real-time species ID by sight AND sound.
-- **#44 Interior Design Visualizer** — "Redesign Any Room" ($9.99-999/mo, $175B interior design). Room analysis + furniture recommendations + affiliate revenue.
-- **#45 Bartender Assistant** — "Master Mixologist" ($7.99-199/mo, $100B spirits market). Scan your bar → instant cocktail menu.
-- **#46 Handwriting-to-Digital** — "Never Lose a Whiteboard" ($9.99-499/mo, $5.2B digital whiteboard market). Real-time OCR + diagram/equation detection.
+#### 4. Revenue Brainstorming - 6 New Ideas
+- **#41 Language Tutor** - "Learn by Living" ($14.99-999/mo, $61B language learning market). Context-based learning with 300% better retention.
+- **#42 Elderly Care Monitor** - "Independent Living, Safe Living" ($19.99-199/mo, $1.7T elderly care market). Fall detection, medication reminders, Medicare reimbursable.
+- **#43 Wildlife Safari Guide** - "Your AI Naturalist" ($9.99-499/mo, $120B wildlife tourism). Real-time species ID by sight AND sound.
+- **#44 Interior Design Visualizer** - "Redesign Any Room" ($9.99-999/mo, $175B interior design). Room analysis + furniture recommendations + affiliate revenue.
+- **#45 Bartender Assistant** - "Master Mixologist" ($7.99-199/mo, $100B spirits market). Scan your bar → instant cocktail menu.
+- **#46 Handwriting-to-Digital** - "Never Lose a Whiteboard" ($9.99-499/mo, $5.2B digital whiteboard market). Real-time OCR + diagram/equation detection.
 
 ### Stats
 - **6 files** (3 modules + 3 test suites) + updated index
@@ -561,20 +605,20 @@ src/
 ```
 
 ### What's Next (Priority)
-1. **Web Dashboard UI** — React frontend connecting to the API server
-2. **Context Chain Engine** — Feature #10: multi-agent workflows (pre-meeting → during → post)
-3. **Store Layout Mapping** — Aisle/section tracking with GPS correlation
-4. **Voice Router Integration** — Connect new agents to voice command pipeline
-5. **Agent Registration System** — Dynamic plugin registration for the context router
+1. **Web Dashboard UI** - React frontend connecting to the API server
+2. **Context Chain Engine** - Feature #10: multi-agent workflows (pre-meeting → during → post)
+3. **Store Layout Mapping** - Aisle/section tracking with GPS correlation
+4. **Voice Router Integration** - Connect new agents to voice command pipeline
+5. **Agent Registration System** - Dynamic plugin registration for the context router
 
 ---
 
-## 2026-02-22 — Night Shift #12 (Security Agent + Meeting Intelligence + Inspection Agent)
+## 2026-02-22 - Night Shift #12 (Security Agent + Meeting Intelligence + Inspection Agent)
 
 ### What Was Built
 
 #### 1. Security Agent (`src/agents/security-agent.ts`)
-- **The watchdog** — passive threat detection and situational awareness
+- **The watchdog** - passive threat detection and situational awareness
 - **QR Code Analysis:** Decodes QR codes and analyzes destination URLs for risk
   - URL shortener detection (17 known shortener domains)
   - Suspicious TLD detection (20+ risky TLDs like .xyz, .top, .club)
@@ -597,12 +641,12 @@ src/
 - **69 tests**
 
 #### 2. Meeting Intelligence Agent (`src/agents/meeting-agent.ts`)
-- **Your invisible meeting assistant** — captures everything so you can stay present
+- **Your invisible meeting assistant** - captures everything so you can stay present
 - **Meeting Lifecycle:** Start/pause/resume/end with full state management
 - **Transcript Processing:**
   - Speaker tracking with automatic participant detection
   - Configurable transcript length limits
-- **Action Item Auto-Detection** — 7 regex patterns:
+- **Action Item Auto-Detection** - 7 regex patterns:
   - "I'll do X by Friday" → owner + task + deadline
   - "John will fix the bug" → named owner + task
   - "We need to update X by Monday" → task + deadline
@@ -610,10 +654,10 @@ src/
   - "Action item: Sarah - review PR" → explicit command
   - "TODO: X" → task extraction
   - "Let's make sure X does Y" → delegated task
-- **Decision Auto-Detection** — 6 patterns:
+- **Decision Auto-Detection** - 6 patterns:
   - "We decided to use X", "Let's go with X", "We're going with X"
   - "The decision is X", "Final answer is X", "We'll use X"
-- **Question Detection** — captures open questions for follow-up
+- **Question Detection** - captures open questions for follow-up
 - **Visual Capture:** Slides, whiteboards, screens, documents
   - Change detection via Jaccard similarity on word sets
   - Only stores when content changes significantly (configurable threshold)
@@ -626,13 +670,13 @@ src/
 - **70 tests**
 
 #### 3. Inspection Agent (`src/agents/inspection-agent.ts`)
-- **Walk through any space, get a professional report** — hands-free documentation
+- **Walk through any space, get a professional report** - hands-free documentation
 - **6 Inspection Types:** property, server room, construction, warehouse, vehicle, general
 - **Section/Room Management:**
   - Navigate between areas: "Next room: Kitchen"
   - Per-section image counts, findings, notes, condition assessments
   - Configurable max sections
-- **Auto-Finding Detection** — 33+ patterns across all inspection types:
+- **Auto-Finding Detection** - 33+ patterns across all inspection types:
   - **Property (10):** Water damage, mold (critical), wall cracks, peeling paint, broken windows, tile damage, safety devices, exposed wiring (critical), floor stains, rust/corrosion
   - **Server Room (6):** Cable management, thermal issues, missing labels, capacity limits, dust, warning LEDs
   - **Construction (5):** PPE violations (critical), fall/trip hazards, unsecured scaffolding (critical), work progress, defects
@@ -649,13 +693,13 @@ src/
   - Voice-friendly TTS summary
 - **67 tests**
 
-#### 4. Revenue Brainstorming — 6 New Ideas
-- **#35 Contract Negotiation Assistant** — "Never Sign Blind" ($9.99-499/mo, $350B legal services market). Grammarly for contracts.
-- **#36 Grocery Nutrition Coach** — "Eat Smarter Without Trying" ($7.99-49.99/mo, $860B grocery + $30B diabetes management). Allergy alerts, nutrition scoring.
-- **#37 Real Estate Open House Navigator** — Auto-document every room, compare properties ($14.99-199/mo, 5.4M homes sold/year).
-- **#38 Pharmacy Medication Verifier** — Pill identification + interaction checking ($9.99-999/mo, $600B prescription market, LIFE-SAVING feature).
-- **#39 Thrift Store Treasure Hunter** — Instant resale value for any item ($19.99-99.99/mo, $18B thrift + $50B resale, 9/10 viral).
-- **#40 Personal Safety Escort** — "Walk Home Safer" ($4.99-29.99/mo, $3B personal safety, MOVEMENT-level impact).
+#### 4. Revenue Brainstorming - 6 New Ideas
+- **#35 Contract Negotiation Assistant** - "Never Sign Blind" ($9.99-499/mo, $350B legal services market). Grammarly for contracts.
+- **#36 Grocery Nutrition Coach** - "Eat Smarter Without Trying" ($7.99-49.99/mo, $860B grocery + $30B diabetes management). Allergy alerts, nutrition scoring.
+- **#37 Real Estate Open House Navigator** - Auto-document every room, compare properties ($14.99-199/mo, 5.4M homes sold/year).
+- **#38 Pharmacy Medication Verifier** - Pill identification + interaction checking ($9.99-999/mo, $600B prescription market, LIFE-SAVING feature).
+- **#39 Thrift Store Treasure Hunter** - Instant resale value for any item ($19.99-99.99/mo, $18B thrift + $50B resale, 9/10 viral).
+- **#40 Personal Safety Escort** - "Walk Home Safer" ($4.99-29.99/mo, $3B personal safety, MOVEMENT-level impact).
 
 ### Stats
 - **7 files** (3 modules + 3 test suites + updated index)
@@ -713,21 +757,21 @@ src/
 ```
 
 ### What's Next (Priority)
-1. **Web Dashboard UI** — React frontend connecting to the API server
-2. **Context Chain Engine** — Feature #10: multi-agent workflows (pre-meeting → during → post)
-3. **Store Layout Mapping** — Aisle/section tracking with GPS correlation
-4. **Translation Agent** — Feature #9: multilingual OCR + cultural context
-5. **Context-Aware Assistant** — Feature #8: identifies what you're looking at by context
-6. **Debug Agent** — Feature #6: look at code/errors, get fixes through speaker
+1. **Web Dashboard UI** - React frontend connecting to the API server
+2. **Context Chain Engine** - Feature #10: multi-agent workflows (pre-meeting → during → post)
+3. **Store Layout Mapping** - Aisle/section tracking with GPS correlation
+4. **Translation Agent** - Feature #9: multilingual OCR + cultural context
+5. **Context-Aware Assistant** - Feature #8: identifies what you're looking at by context
+6. **Debug Agent** - Feature #6: look at code/errors, get fixes through speaker
 
 ---
 
-## 2026-02-21 — Night Shift #11 (Context Router + Networking Agent + Deal Analysis)
+## 2026-02-21 - Night Shift #11 (Context Router + Networking Agent + Deal Analysis)
 
 ### What Was Built
 
 #### 1. Context Router (`src/routing/context-router.ts`)
-- **The brain of the platform** — decides which specialist agent handles each image
+- **The brain of the platform** - decides which specialist agent handles each image
 - Scene-type auto-detection: retail_shelf → inventory/deals, person → networking, vehicle → deals, whiteboard → meeting
 - Voice intent routing: "price check" → deals agent, "who is this" → networking agent
 - Mode stickiness: stays in current mode unless scene clearly changes (prevents thrashing)
@@ -793,13 +837,13 @@ src/
 - Added "who is this/they" patterns for networking scenarios
 - Added "who am I/are we looking/talking at/to" patterns
 
-#### 6. Revenue Brainstorming — 6 New Ideas
-- **#29 Event Photographer Assistant** — Real-time shot scoring + auto-culling ($29.99-199/mo, $12B market)
-- **#30 Warehouse Pick Verification** — Zero-error fulfillment, 192:1 ROI ($29-499/mo, $300B market)
-- **#31 Tattoo Artist Preview** — "See it before you ink it" AR ($49-149/mo, $3B market, 10/10 viral)
-- **#32 Electrician/Plumber Diagnostic** — X-ray vision for trades ($49-499/mo, $330B market)
-- **#33 Museum Docent AI** — Personal art guide ($999-5K/mo B2B, $21B market)
-- **#34 Parking Lot Asset Tracker** — Fleet/dealer lot intelligence ($299-5K/mo, $40B market)
+#### 6. Revenue Brainstorming - 6 New Ideas
+- **#29 Event Photographer Assistant** - Real-time shot scoring + auto-culling ($29.99-199/mo, $12B market)
+- **#30 Warehouse Pick Verification** - Zero-error fulfillment, 192:1 ROI ($29-499/mo, $300B market)
+- **#31 Tattoo Artist Preview** - "See it before you ink it" AR ($49-149/mo, $3B market, 10/10 viral)
+- **#32 Electrician/Plumber Diagnostic** - X-ray vision for trades ($49-499/mo, $330B market)
+- **#33 Museum Docent AI** - Personal art guide ($999-5K/mo B2B, $21B market)
+- **#34 Parking Lot Asset Tracker** - Fleet/dealer lot intelligence ($299-5K/mo, $40B market)
 
 ### Stats
 - **7 new files** (3 modules + 3 test suites + 1 integration test) + 2 modified
@@ -850,16 +894,16 @@ src/
 ```
 
 ### What's Next (Priority)
-1. **Web Dashboard UI** — React frontend connecting to the API server
-2. **Security Agent** — Feature #4: QR codes, ATM skimmers, document analysis
-3. **Meeting Intelligence Agent** — Feature #5: transcription + slides + action items
-4. **Store Layout Mapping** — Aisle/section tracking with GPS correlation
-5. **Context Chain Engine** — Feature #10: multi-agent workflows
-6. **Inspection Agent** — Feature #7: property/server room walkthroughs
+1. **Web Dashboard UI** - React frontend connecting to the API server
+2. **Security Agent** - Feature #4: QR codes, ATM skimmers, document analysis
+3. **Meeting Intelligence Agent** - Feature #5: transcription + slides + action items
+4. **Store Layout Mapping** - Aisle/section tracking with GPS correlation
+5. **Context Chain Engine** - Feature #10: multi-agent workflows
+6. **Inspection Agent** - Feature #7: property/server room walkthroughs
 
 ---
 
-## 2026-02-20 — Night Shift #10 (Node Bridge + Persistence + Memory Agent)
+## 2026-02-20 - Night Shift #10 (Node Bridge + Persistence + Memory Agent)
 
 ### What Was Built
 
@@ -890,7 +934,7 @@ src/
   - **Inventory items:** Query by category, aisle, flags, confidence; search by name/brand/SKU; sort + paginate
   - **Image storage:** Buffers saved to disk organized by date; metadata in SQLite
   - **Visual memory index:** Scene descriptions, OCR text, objects, products, tags, GPS
-  - **FTS5 full-text search:** Search everything you've ever seen — whiteboards, signs, documents, labels
+  - **FTS5 full-text search:** Search everything you've ever seen - whiteboards, signs, documents, labels
 - WAL mode for concurrent access
 - Retention policies with auto-cleanup
 - Session statistics (totals, value, flags)
@@ -898,7 +942,7 @@ src/
 - **38 tests**
 
 #### 4. Perfect Memory Agent (`src/agents/memory-agent.ts`)
-- The foundation for the entire platform — your searchable visual history
+- The foundation for the entire platform - your searchable visual history
 - Coordinates: Image Scheduler → Vision Pipeline → Persistence Layer
 - Natural language memory search ("What was on that whiteboard?")
 - Voice-friendly search results with time-ago formatting
@@ -913,29 +957,29 @@ src/
 #### 5. Dashboard REST API (`src/dashboard/api-server.ts`)
 - HTTP server for the web dashboard (port 3847)
 - Endpoints:
-  - `GET /api/health` — System health + DB stats
-  - `GET /api/live` — Live inventory session status
-  - `GET /api/live/items` — Live items with search/filter/sort/paginate
-  - `GET /api/sessions` — Session history with filters
-  - `GET /api/sessions/:id` — Session detail
-  - `GET /api/sessions/:id/items` — Session items with full querying
-  - `GET /api/sessions/:id/stats` — Session statistics
-  - `GET /api/sessions/:id/export` — CSV or JSON export download
-  - `GET /api/memory/search` — Full-text memory search
-  - `GET /api/memory/browse` — Browse memories by date/type
-  - `GET /api/memory/stats` — Memory statistics
-  - `GET /api/events` — SSE (Server-Sent Events) for real-time updates
+  - `GET /api/health` - System health + DB stats
+  - `GET /api/live` - Live inventory session status
+  - `GET /api/live/items` - Live items with search/filter/sort/paginate
+  - `GET /api/sessions` - Session history with filters
+  - `GET /api/sessions/:id` - Session detail
+  - `GET /api/sessions/:id/items` - Session items with full querying
+  - `GET /api/sessions/:id/stats` - Session statistics
+  - `GET /api/sessions/:id/export` - CSV or JSON export download
+  - `GET /api/memory/search` - Full-text memory search
+  - `GET /api/memory/browse` - Browse memories by date/type
+  - `GET /api/memory/stats` - Memory statistics
+  - `GET /api/events` - SSE (Server-Sent Events) for real-time updates
 - CORS enabled for local dev
 - Optional bearer token auth
 - Real-time push to connected clients (item updates, flags, session changes)
 
-#### 6. Revenue Brainstorming — 6 New Ideas
-- **#23 Delivery Driver Vision** — Route nav + proof-of-delivery ($14.99-499/mo, $200B market)
-- **#24 Restaurant Kitchen AI** — Hands-free KDS + food quality ($79-999/mo, $1T market)
-- **#25 Insurance Claims Adjuster** — Damage assessment + Xactimate ($199-20K/mo, $750B market)
-- **#26 Accessibility Vision** — AI eyes for visually impaired ($19.99-199/mo, $25B market, MASSIVE PR)
-- **#27 Compliance Badge Scanner** — OSHA cert verification ($199-2K/mo, $2T market)
-- **#28 Live Sports Analytics** — Real-time coaching vision ($49-1,999/mo, $19B market)
+#### 6. Revenue Brainstorming - 6 New Ideas
+- **#23 Delivery Driver Vision** - Route nav + proof-of-delivery ($14.99-499/mo, $200B market)
+- **#24 Restaurant Kitchen AI** - Hands-free KDS + food quality ($79-999/mo, $1T market)
+- **#25 Insurance Claims Adjuster** - Damage assessment + Xactimate ($199-20K/mo, $750B market)
+- **#26 Accessibility Vision** - AI eyes for visually impaired ($19.99-199/mo, $25B market, MASSIVE PR)
+- **#27 Compliance Badge Scanner** - OSHA cert verification ($199-2K/mo, $2T market)
+- **#28 Live Sports Analytics** - Real-time coaching vision ($49-1,999/mo, $19B market)
 
 ### Stats
 - **10 new files** (5 modules + 4 test suites + updated index)
@@ -977,16 +1021,16 @@ src/
 ```
 
 ### What's Next (Priority)
-1. **Web Dashboard UI** — React frontend connecting to the API server
-2. **Integration Tests** — End-to-end flows with mocked vision model
-3. **Networking Agent** — Feature #2 from the spec (badge/card scanning)
-4. **Deal Analysis Agent** — Feature #3 (price intelligence)
-5. **Image Processing Queue** — Async queue for handling burst captures
-6. **Store Layout Mapping** — Aisle/section tracking with GPS correlation
+1. **Web Dashboard UI** - React frontend connecting to the API server
+2. **Integration Tests** - End-to-end flows with mocked vision model
+3. **Networking Agent** - Feature #2 from the spec (badge/card scanning)
+4. **Deal Analysis Agent** - Feature #3 (price intelligence)
+5. **Image Processing Queue** - Async queue for handling burst captures
+6. **Store Layout Mapping** - Aisle/section tracking with GPS correlation
 
 ---
 
-## 2026-02-19 — Night Shift #9 (First Ray-Ban Code Night)
+## 2026-02-19 - Night Shift #9 (First Ray-Ban Code Night)
 
 ### Foundation Laid 🏗️
 This was the first night of actual code for the Ray-Ban project. Built the entire core architecture from scratch.
@@ -1054,10 +1098,10 @@ This was the first night of actual code for the Ray-Ban project. Built the entir
 - Event-driven for UI/dashboard integration
 
 #### 8. Comprehensive Test Suite
-- `inventory-state.test.ts` — 40+ tests (lifecycle, dedup, counting, flags, queries, stats, edge cases)
-- `voice-command-router.test.ts` — 50+ tests (all intents, parameter extraction, edge cases, custom commands)
-- `export-service.test.ts` — 35+ tests (CSV, TSV, JSON, filtering, sorting, summaries, edge cases)
-- `product-database.test.ts` — 25+ tests (UPC normalization, caching, API mocking, batch lookup)
+- `inventory-state.test.ts` - 40+ tests (lifecycle, dedup, counting, flags, queries, stats, edge cases)
+- `voice-command-router.test.ts` - 50+ tests (all intents, parameter extraction, edge cases, custom commands)
+- `export-service.test.ts` - 35+ tests (CSV, TSV, JSON, filtering, sorting, summaries, edge cases)
+- `product-database.test.ts` - 25+ tests (UPC normalization, caching, API mocking, batch lookup)
 - **Total: ~150+ tests**
 
 ### Architecture
@@ -1082,12 +1126,12 @@ src/
 ```
 
 ### What's Next (Priority)
-1. **OpenClaw Node Bridge** — Connect Ray-Ban camera_snap to the vision pipeline
-2. **Dashboard** — Web UI for live inventory progress
-3. **Image Capture Scheduler** — Auto-snap at configurable intervals
-4. **Persistence Layer** — SQLite storage for sessions and items
-5. **Integration Tests** — End-to-end flow with mock vision model
-6. **More Agents** — Perfect Memory, Networking, Deal Analysis
+1. **OpenClaw Node Bridge** - Connect Ray-Ban camera_snap to the vision pipeline
+2. **Dashboard** - Web UI for live inventory progress
+3. **Image Capture Scheduler** - Auto-snap at configurable intervals
+4. **Persistence Layer** - SQLite storage for sessions and items
+5. **Integration Tests** - End-to-end flow with mock vision model
+6. **More Agents** - Perfect Memory, Networking, Deal Analysis
 
 ---
 
