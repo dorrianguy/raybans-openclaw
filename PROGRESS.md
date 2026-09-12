@@ -4,6 +4,92 @@ _Updated by Night Shift agent + daytime development._
 
 ---
 
+## 2026-09-11 — Night Shift #36 (Fault Recovery + Customer Feedback + Compliance & Data Governance)
+
+### What Was Built
+
+#### 1. Fault Recovery Engine (`src/recovery/fault-recovery.ts`)
+- **Crash-proof sessions** — no work lost during inventory counts, ever
+- **Session Checkpointing:** Create state snapshots at configurable intervals with hash-based integrity verification
+- **Write-Ahead Log (WAL):** Append-only operation log for replaying state changes since last checkpoint, with compaction threshold triggering forced checkpoints
+- **Crash Recovery:** Restore from latest checkpoint + replay WAL entries, with estimated data loss calculation
+- **Network Partition Handling:** Auto-detect connectivity loss, degrade gracefully, restore on reconnect
+- **Hardware Disconnect Detection:** Heartbeat-based monitoring for glasses/phone disconnects with configurable timeout
+- **Progressive Degradation:** 5 levels (full → reduced → local_only → offline → suspended) with capability gating per level (cloud_vision, sync, export, etc.)
+- **Health Probes:** Register async health checks with interval-based execution, consecutive failure tracking, and auto-fault reporting
+- **Recovery Plans:** Fault-type-aware strategy selection (10 fault types × ordered strategy lists), auto-recovery with attempt tracking
+- **MTBF/MTTR Tracking:** Mean Time Between Failures and Mean Time To Recovery statistics
+- **Voice Summaries:** "System fully operational. 2 devices connected."
+- **113 tests**
+
+#### 2. Customer Feedback Engine (`src/feedback/feedback-engine.ts`)
+- **SaaS retention infrastructure** — know your customers before they churn
+- **NPS Surveys:** Net Promoter Score (0-10) with promoter/passive/detractor classification, trend analysis (improving/stable/declining)
+- **CSAT Tracking:** Customer Satisfaction Score (1-5 stars) with distribution analysis and satisfaction rate
+- **CES Tracking:** Customer Effort Score (1-7) for onboarding quality measurement
+- **Thumbs Up/Down:** Micro-feedback on individual agent responses, filterable by agent and feature
+- **Sentiment Analysis:** 60+ positive/negative word detection, 5-level classification (very_positive → very_negative)
+- **Feature Request System:** Submission + voting (prevent double-votes) + status tracking (new → planned → shipped) + revenue impact estimation, sortable by votes/date/priority
+- **Churn Prediction:** Customer health scoring (0-100) based on inactivity, feedback scores, sentiment trends, NPS detractor status, adoption level. 5 risk levels (none → critical)
+- **Survey Scheduling:** Monthly survey limits, eligibility checks, trigger-based scheduling (post_session, milestone, periodic, onboarding, feature_first_use)
+- **Milestone Detection:** Celebrate customer milestones (1, 5, 10, 25, 50, 100... sessions)
+- **Feedback Insights:** Auto-extract topics from tags + text, aggregate sentiment, generate actionable recommendations
+- **Voice Summaries:** "Net Promoter Score: 75. Excellent. 2 customers at high churn risk."
+- **112 tests**
+
+#### 3. Compliance & Data Governance Engine (`src/compliance/compliance-engine.ts`)
+- **Enterprise-ready GDPR/CCPA compliance** — the feature that unlocks $499+/mo tiers
+- **Consent Management:** Granular opt-in/out per 11 data categories (images, audio, location, biometric, inventory, contacts, transactions, analytics, personal, health, financial), version tracking, expiration, legal basis recording, source/IP audit trail
+- **11 Default Retention Policies:** Images (90d delete), Audio (30d delete), Location (7d anonymize), Biometric (1d delete!), Inventory (365d archive), Contacts (180d anonymize), Analytics (730d anonymize), Personal (365d review), Health (30d delete), Financial (2555d/7yr archive — tax law), Transactions (365d anonymize)
+- **DSAR Lifecycle:** Data Subject Access Requests with receive → assign → complete/reject workflow, configurable deadlines (default 30 days per GDPR), overdue detection with compliance violation alerts
+- **Right-to-Erasure (GDPR Article 17):** Complete data purge with consent withdrawal, category tracking, and audit logging
+- **Data Export (Portability):** Generate JSON exports of all subject data for portability requests
+- **Breach Management:** Detection → containment → authority notification → subject notification → resolution flow, 72-hour notification deadline tracking, severity classification, remediation recording
+- **Processing Activity Records (GDPR Article 30):** Register all data processing activities with purpose, legal basis, recipients, cross-border flag, DPIA requirements
+- **Compliance Scoring:** 0-100 score with penalties for overdue DSARs (-20), active breaches (-25), notification violations (-15), missing policies (-10), no registered activities (-5)
+- **Complete Audit Trail:** All compliance actions logged with timestamps, subject IDs, categories, performers, results
+- **Voice Summaries:** "Compliance score: 95 out of 100. Excellent. 2 active consents across 1 subject."
+- **103 tests**
+
+#### 4. Revenue Brainstorming — 6 New Ideas (#185-190)
+- **#185 Sign Language Interpreter Assist** — "Bridge Every Conversation" ($8B interpreting services, $3B ADA compliance, 500K+ deaf individuals in US). Real-time ASL recognition, voice-to-text overlay, interpreter assistance with unfamiliar signs. $19.99-999/mo.
+- **#186 Pool/Billiards Coach** — "See the Angles Before You Shoot" ($10B billiards industry, 40M+ US players). Ghost ball aim visualization, physics engine for spin/English effects, banking angle calculations, shot accuracy tracking. $9.99-499/mo.
+- **#187 Elevator/Escalator Inspector** — "Certified Inspection in Half the Time" ($30B elevator maintenance, 1M+ US elevators, only 5,000 QEIs nationwide). 200+ checkpoint tracking, ASME A17.1 code lookup by voice, deficiency classification, auto-generated reports. $79-999/mo.
+- **#188 Gemstone Grading Assistant** — "4C Analysis Without the Lab" ($87B diamond industry, $300B jewelry retail). Color/clarity/cut estimation, carat weight from dimensions, synthetic detection flags, Rapaport pricing. $49-999/mo.
+- **#189 Wind Turbine Blade Inspector** — "See the Cracks From the Ground" ($15B wind O&M globally, 850K+ turbines). Leading edge erosion classification, lightning damage detection, crack measurement, SCADA correlation. $199-4,999/mo.
+- **#190 Tattoo Artist Design Assistant** — "Preview the Art Before the Ink" ($80B global tattoo, $4.8B removal market). AR design overlay on body contours, skin tone color adjustment, aging simulation, cover-up analysis. $29-499/mo.
+
+### Stats
+- **328 new tests**, all passing
+- **~6,483 lines of code** (6 files)
+- **6 new revenue ideas** (#185-190)
+- **190 total revenue ideas**
+
+### Architecture After Tonight
+```
+src/
+├── recovery/                             # ← NEW
+│   ├── fault-recovery.ts                # Crash recovery, WAL, checkpoints, degradation
+│   └── fault-recovery.test.ts           # 113 tests
+├── feedback/                             # ← NEW
+│   ├── feedback-engine.ts               # NPS/CSAT/CES, churn prediction, feature requests
+│   └── feedback-engine.test.ts          # 112 tests
+├── compliance/                           # ← NEW
+│   ├── compliance-engine.ts             # GDPR/CCPA, consent, retention, breach, DSAR
+│   └── compliance-engine.test.ts        # 103 tests
+├── [... 61+ existing modules ...]
+```
+
+### What's Next (Priority)
+1. **Web Dashboard UI** — React frontend for live inventory + billing portal
+2. **Stripe Live Integration** — Connect BillingEngine to real Stripe API
+3. **Landing Page Build** — React site from landing-page-data.ts
+4. **Recovery → Session Integration** — Wire fault recovery into session controller
+5. **Feedback → Dashboard Integration** — NPS/CSAT widgets in web dashboard
+6. **iOS Companion App** — Dorrian is working on this
+
+---
+
 ## 2026-02-26 — Night Shift #15 (Billing Engine + Store Layout Mapper + Landing Page Data)
 
 ### What Was Built
